@@ -1,7 +1,6 @@
 {
     "name": "L&C-api",
     "version": "1.0.0",
-    "description": "E-commerce API built with Node.js and Express - for Luxury & Cheap.",
     "builds":[
         {
             "src": "index.js",
