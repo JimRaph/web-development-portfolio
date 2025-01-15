@@ -32,7 +32,7 @@ export const orderPostDb = (order) => async (dispatch, getState) => {
     try {
         dispatch({ type: ORDER_REQ })
         const userInfo = getState().loginReducer.user;
-        console.log(userInfo)
+        // console.log(userInfo)
         const config = {
             headers: {
                 "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export const orderPostDb = (order) => async (dispatch, getState) => {
         // dispatch({ type: CART_ITEM_CLEAR, payload: data });
     } catch (error) {
 
-        console.log(error)
+        // console.log(error)
         dispatch({ type: ORDER_FAIL, payload: error.message });
     }
 }
@@ -98,7 +98,7 @@ export const orderPaymentDone = (orderId, paymentResult) => async (dispatch, get
 
 export const orderDetail = (id) => async (dispatch, getState) => {
     try {
-        console.log(id)
+        // console.log(id)
         dispatch({ type: ORDER_DETAIL_REQ });
         const userInfo = getState().loginReducer.user;
         const config = {

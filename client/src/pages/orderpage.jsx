@@ -22,7 +22,7 @@ export default function OrderPage() {
   const { cartItems, shippingAddress } = carts;
 
 
-  console.log(carts)
+  // console.log(carts)
   // Calculate Subtotal
   const subtotal = cartItems.reduce(
     (total, product) => total + product.price * product.qty,
@@ -68,15 +68,15 @@ const getClientIdHandler = async () =>{
 useEffect(() => {
   getClientIdHandler()
 
-  console.log(clientId)
+  // console.log(clientId)
   if(success){
-    console.log('he')
+    // console.log('he')
    
     dispatch({type: ORDER_RESET})
     //UPDATE DB WITH PAYMENT RESULT
-    console.log('heell')
+    // console.log('heell')
     dispatch(orderPaymentDone(order._id, paymentResult))
-    console.log('hello world')
+    // console.log('hello world')
     Navigate(`/order-confirmation/${order._id}`, {})
   }
 }, [paymentResult, order])
@@ -91,9 +91,9 @@ const initialOptions = {
 
 const paymentSuccessHandler = async(paymentResult) => {
   try{
-    console.log('this is successful')
+    // console.log('this is successful')
     setPaymentResult(paymentResult)
-    console.log(paymentResult)
+    // console.log(paymentResult)
     dispatch(orderPostDb({
       orderItems: cartItems,
       shippingAddress: shippingAddress,
@@ -105,11 +105,11 @@ const paymentSuccessHandler = async(paymentResult) => {
     }))
     dispatch(clearCart())  
   }catch(err){
-    console.log(err)
+    // console.log(err)
   }
 }
 
-console.log(orderReducer)
+// console.log(orderReducer)
 
 if(!clientId){
   return <div>Loading...</div>

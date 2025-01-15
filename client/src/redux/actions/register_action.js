@@ -13,12 +13,12 @@ export const registerAction = (name, email, password) =>async(dispatch) => {
     const {data} = await axios.post(`${base_url}/api/user/register`, {name, email, password})
 
     dispatch({type: REGISTER_SUCCESS, payload: data});
-    console.log({data})
-    console.log('woo')
+    // console.log({data})
+    // console.log('woo')
 
    }catch(err){
-    console.log(err.message)
-    console.log(err.response.data.message)
+    // console.log(err.message)
+    // console.log(err.response.data.message)
     dispatch({type: REGISTER_FAILED, payload:err.response.data.message})
    }
 }
