@@ -35,7 +35,6 @@ const Header = () => {
               className="flex mb-3 items-center justify-around rtl:space-x-reverse"
             >
               <img
-                // src="https://flowbite.com/docs/images/logo.svg"
                 src="../src/assets/logo.png"
                 className="h-8"
                 alt="Luxury & Cheap Logo"
