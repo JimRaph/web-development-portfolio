@@ -14,8 +14,8 @@ const Footer = () =>{
                   className="h-8"
                   alt="Luxury & Cheap Logo"
                 /> */} 
-                <span className="font-extrabold text-blue-900 p-1">Luxury & Cheap</span>
-                <span className="self-center h-9 text-2xl font-semibold whitespace-nowrap text-blue-800">
+                <span className="font-extrabold text-blue-700 p-1">Luxury & Cheap</span>
+                <span className="self-center h-9 text-2xl font-bold whitespace-nowrap text-blue-700">
                 |
               </span>
               </Link>

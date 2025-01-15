@@ -37,30 +37,30 @@ userRouter.post("/register", expressAsyncHandler(async (req, res) =>{
 
 userRouter.post("/login", expressAsyncHandler(async(req, res) =>{
     const {email, password} = req.body;
-
+    console.log(email, " ", password)
     const user = await userSchema.findOne({email});
-    if(!user){
-        res.status(400).send("This user does not exist")
-    }
+    // if(!user){
+    //     res.status(400).json({error: "User not found"})
+    // }
     const checkPassword = await bcrypt.compare(password, user.password);
-    if(!checkPassword){
-        res.status(400).send("Incorrect password")
+    if(!checkPassword || !user){
+        res.status(400).json({error: "invalid credential"})
+    }else{
+        const token = jwt.sign({
+            id: user.id,
+        }, process.env.JWTSECRET, {
+            expiresIn: '7d'
+        })
+
+        res.status(200).send({
+            _id: user.id,
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin,
+            token: token,
+            createdAt: user.createdAt,
+        })
     }
-
-    const token = jwt.sign({
-        id: user.id,
-    }, process.env.JWTSECRET, {
-        expiresIn: '7d'
-    })
-
-    res.status(200).send({
-        _id: user.id,
-        name: user.name,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        token: token,
-        createdAt: user.createdAt,
-    })
 
 }))
 

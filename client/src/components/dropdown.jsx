@@ -8,7 +8,7 @@ export function HeaderDropDown({logOutHandler}) {
   return (
     <Dropdown 
     renderTrigger={() => (
-      <button className="bg-blue-800 hover:bg-blue-700 text-white font-bold px-4 mb-2 py-2 rounded">
+      <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold px-4 mb-2 py-2 rounded">
         Menu
       </button>
     )}

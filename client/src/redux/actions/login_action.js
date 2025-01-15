@@ -10,12 +10,13 @@ export const loginAction = (email, password) =>async(dispatch) => {
    try{
     dispatch({type: LOGIN_REQ})
     const {data} = await axios.post(`${base_url}/api/user/login`, {email, password})
-    
+    console.log(data)
     dispatch({type: LOGIN_SUCCESS, payload: data});
     localStorage.setItem('userinfo', JSON.stringify(data))
     console.log('word')
    }catch(err){
-    dispatch({type: LOGIN_FAILED, payload:err.message})
+    dispatch({type: LOGIN_FAILED, payload:err.response.data.error})
+    console.log("error: ",err.response.data.error)
    }
 }
 

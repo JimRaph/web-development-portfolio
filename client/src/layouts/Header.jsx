@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 import { useState } from "react";
 import { HeaderDropDown } from "../components/dropdown";
 import CartPage from "../pages/cartpage";
-
+import { logoutAction } from "../redux/actions/login_action";
 
 
 const Header = () => {
@@ -16,7 +16,7 @@ const Header = () => {
 
   const quantityInCart = useSelector((state) => state.cartReducer.cartItems.reduce((total, product) => total + product.qty, 0))
   
-  const cartitems = useSelector((state) => state.cartReducer.cartItems)
+  // const cartitems = useSelector((state) => state.cartReducer.cartItems)
   
   const logOutHandler = () => {
     dispatch(logoutAction());
@@ -39,15 +39,15 @@ const Header = () => {
                 className="h-8"
                 alt="Luxury & Cheap Logo"
               /> */}
-              <span className="font-extrabold text-blue-900 p-1">Luxury & Cheap</span>
-              <span className="self-center h-9 text-2xl font-semibold whitespace-nowrap text-blue-800">
+              <span className="font-extrabold text-blue-700 p-1">Luxury & Cheap</span>
+              <span className="self-center h-9 text-2xl font-bold whitespace-nowrap text-blue-700">
                 |
               </span>
             </Link>
 
             <div className="flex md:order-2 space-x-3 md:space-x-3 rtl:space-x-reverse">
             <Link to='/' 
-              className="text-blue-800 hover:underline font-medium rounded-lg text-md px-4 mb-2 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="text-blue-700 hover:underline font-medium rounded-lg text-md px-4 mb-2 py-2"
             > 
                Home
             </Link>
@@ -55,7 +55,7 @@ const Header = () => {
               {!user ? (
                   <Link to='/register'
                   type="button"
-                  className="text-white bg-blue-700 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className="text-white bg-blue-700 hover:bg-blue-800 font-medium text-sm px-4 py-3 mb-2 rounded-lg text-center"
                 >
                   Get started
                 </Link>

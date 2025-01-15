@@ -13,16 +13,25 @@ const Login = () => {
   const loginHandler = (e) => {
     e.preventDefault();
     dispatch(loginAction(email, password));
-    navigate('/')
+   
   };
+
+console.log(loading, error, user)
 
   useEffect(()=>{
     if(error){
         dispatch({type: 'CLEAR_LOGIN_ERROR'})
+        // alert("login error, please try again: ", error)
         console.log('work')
         console.log(error)
     }
    }, [error])
+
+   useEffect(()=>{
+    if(localStorage.getItem('userinfo')){
+      navigate('/')
+    }
+   }, [loading])
 
   return (
     <>
@@ -30,6 +39,7 @@ const Login = () => {
         <h1>loading</h1>
       ) : error ? (
         <h1>{error}</h1>
+        // <h1>error</h1>
       ) : (
         <section className="bg-gray-50 dark:bg-gray-900">
           <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
