@@ -34,11 +34,12 @@ const Header = () => {
             <Link to = "/" 
               className="flex mb-3 items-center justify-around rtl:space-x-reverse"
             >
-              <img
+              {/* <img
                 src="../src/assets/logo.png"
                 className="h-8"
                 alt="Luxury & Cheap Logo"
-              />
+              /> */}
+              <span className="font-extrabold text-blue-900 p-1">Luxury & Cheap</span>
               <span className="self-center h-9 text-2xl font-semibold whitespace-nowrap text-blue-800">
                 |
               </span>
