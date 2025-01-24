@@ -19,6 +19,7 @@ export const registerAction = (name, email, password) =>async(dispatch) => {
    }catch(err){
     // console.log(err.message)
     // console.log(err.response.data.message)
-    dispatch({type: REGISTER_FAILED, payload:err.response.data.message})
+    dispatch({type: REGISTER_FAILED, payload: err.response.data.error})
+    // console.log(err.response.data.error)
    }
 }

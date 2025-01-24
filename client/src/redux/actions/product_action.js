@@ -12,7 +12,7 @@ import  {base_url}  from '../constants/url.js';
 
 export const productListAction = () => async(dispatch) => {
     try{
-        await axios.get(`${base_url}/api/seed/products`)
+        // await axios.get(`${base_url}/api/seed/products`)
         dispatch({type: PRODUCT_LIST_REQ})
         const {data} = await axios.get(`${base_url}/api/products`);
         dispatch({type: PRODUCT_LIST_SUCCESS, payload: data})

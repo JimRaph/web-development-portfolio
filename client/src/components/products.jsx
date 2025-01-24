@@ -2,6 +2,8 @@ import { useEffect } from "react"
 import {useDispatch, useSelector} from 'react-redux'
 import {Link} from 'react-router-dom'
 import { productListAction } from "../redux/actions/product_action"
+import RotateLoader from "react-spinners/RotateLoader"
+
 const Products = () => {
   const dispatch = useDispatch();
   const productListReducer = useSelector((state) => state.productListReducer)
@@ -13,7 +15,11 @@ const Products = () => {
   
     return (
       <div>
-          {loading ? (<h1>LOADING</h1>) : error ? (<h1>{error}</h1>)
+          {loading ? (
+            <div className=" absolute top-[50%] left-[50%]">
+            <RotateLoader color="blue" loading={loading}
+            />
+            </div>) : error ? (<h1>{error}</h1>)
           : (
 
             <>

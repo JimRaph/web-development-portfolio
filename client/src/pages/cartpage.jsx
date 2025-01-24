@@ -3,9 +3,10 @@
 // import { useState } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import CartItemList from '../components/cartlist'
 import { Link } from 'react-router-dom'
+// import { loadCart } from '../redux/actions/cart_action'
 import { useEffect, useState } from 'react'
 
 const products = [
@@ -35,9 +36,21 @@ const products = [
 
 export default function CartPage({open, setOpen}) {
 
-const cartItem = useSelector((state) => state.cartReducer.cartItems)
+const cartItemResult = useSelector((state) => state.cartReducer.cartItems)
+const loginReducer = useSelector((state) =>state.loginReducer)
+const {user} = loginReducer;
 
+const cartItem = cartItemResult.filter((item) => item?.user === user._id )
 
+// console.log('cartItem: ', cartItem)
+const dispatch = useDispatch()
+
+// useEffect(() => {
+//   const user = JSON.parse(localStorage.getItem('userinfo'))
+//   dispatch(loadCart(user._id))
+// }, [])
+
+// console.log(cartItem)
 
   return (
     
@@ -46,7 +59,7 @@ const cartItem = useSelector((state) => state.cartReducer.cartItems)
     } className="relative z-10">
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
+        className="fixed inset-0 bg-gray-500/75 transition-opacity duration-500 ease-in-out data-[closed]:opacity-0 -z-0"
       />
 
       <div className="fixed inset-0 overflow-hidden">
@@ -72,9 +85,14 @@ const cartItem = useSelector((state) => state.cartReducer.cartItems)
                       </button>
                     </div>
                   </div>
+                  
+                  { !cartItem.length > 0 && <div className='absolute top-[40%] left-[10%]'>
+                          <p className='text-sm'>Nothing here - why don't you add items to your cart?</p>
+                        </div>
+                  }
 
                   <CartItemList cartItem = {cartItem}/>
-                  
+                    
                 </div>
 
                 <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
@@ -84,7 +102,7 @@ const cartItem = useSelector((state) => state.cartReducer.cartItems)
                   </div>
                   <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                   <div className="mt-6">
-                    <Link to = "/order-payment"
+                    <Link to ={!cartItem.length > 0 ? "." : "/order-payment"}
                       href="#"
                       className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                     >
@@ -114,3 +132,7 @@ const cartItem = useSelector((state) => state.cartReducer.cartItems)
 
   )
 }
+
+
+
+

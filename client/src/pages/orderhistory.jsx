@@ -11,9 +11,14 @@ const OrderHistory = () =>{
     const orderListReducer = useSelector((state) => state.orderListReducer)
     const {orders=[], loading, error} = orderListReducer;
 
+    const {user} = useSelector((state) => state.loginReducer)
+
+
     const [orderLists, setOrderLists] = useState([])
     const dispatch = useDispatch();
 
+    const myOrders = orders.filter(order => order.user === user._id)
+   
     // const handleOrderType = (e) => {
     //   const orderTemp = structuredClone(orders);
     //   const filterOrder = orderTemp.filter((order) =>{
@@ -106,7 +111,7 @@ const OrderHistory = () =>{
 
   // Combined filtering logic
   const applyFilters = () => {
-    let filteredOrders = [...orders];
+    let filteredOrders = [...myOrders];
 
     // Apply order type filter
     if (typeFilter === "paid") {

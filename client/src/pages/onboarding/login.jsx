@@ -21,7 +21,7 @@ const Login = () => {
   useEffect(()=>{
     if(error){
         dispatch({type: 'CLEAR_LOGIN_ERROR'})
-        // alert("login error, please try again: ", error)
+        alert("login error, please try again: ", error)
         // console.log('work')
         // console.log(error)
     }

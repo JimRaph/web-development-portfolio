@@ -1,23 +1,31 @@
 
 import { useDispatch, useSelector } from 'react-redux'
-import { addToCart, removeFromcart } from '../redux/actions/cart_action'
+import { addToCart, removeFromCart } from '../redux/actions/cart_action.js'
 
 const CartItemList = ({cartItem}) =>{
 
     const dispatch = useDispatch()
 
+    // console.log(cartItem)
+
     const removeItem = (id) =>{
-        dispatch(removeFromcart(id))
+        dispatch(removeFromCart(id))
     }
 
     const addItemToCart = (id, qty) =>{
-        dispatch(addToCart(id, qty))
+      // console.log(id)
+      // console.log('addItemToCart')
+       const user = JSON.parse(localStorage.getItem('userinfo'))
+      //  console.log(user)
+        dispatch(addToCart(id, qty, user._id))
     }
 
     return (
         <div className="mt-8">
                     <div className="flow-root">
+                    
                       <ul role="list" className="-my-6 divide-y divide-gray-200">
+                        
                         {cartItem.map((product) => (
                           <li key={product.product} className="flex py-6">
                             <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -38,7 +46,7 @@ const CartItemList = ({cartItem}) =>{
                                 <p className="text-gray-500">Qty 
                                 <select
                                     className="rounded border appearance-none border-gray-300 py-1 ml-2 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 text-base pl-1 pr-1"
-                                   onChange={(e)=>addItemToCart(product.product, Number(e.target.value))}
+                                   onChange={(e)=>addItemToCart((product.product), Number(e.target.value))}
                                    value={product.qty}
                                  >
                             {[...Array(product.countInStock).keys()].map(

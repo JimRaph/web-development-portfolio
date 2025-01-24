@@ -23,7 +23,7 @@
 import React, { useState } from 'react';
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 
-const Checkout = ({paymentSuccessHandler}) => {
+const Checkout = ({paymentSuccessHandler, shippingAddressTrue}) => {
     const [{ options, isPending }, dispatch] = usePayPalScriptReducer();
     const [currency, setCurrency] = useState(options.currency);
 
@@ -39,6 +39,7 @@ const Checkout = ({paymentSuccessHandler}) => {
     }
 
     const onCreateOrder = (data,actions) => {
+        
         return actions.order.create({
             purchase_units: [
                 {
@@ -58,8 +59,8 @@ const Checkout = ({paymentSuccessHandler}) => {
     }
 
     return (
-        <div className="checkout">
-            {isPending ? <p>LOADING...</p> : (
+        <div className="checkout relative z-0">
+            {isPending ? <p>LOADING...</p> : shippingAddressTrue ? (
                 <>
                     <select 
                     className='w-full mb-1 outline-none '
@@ -67,7 +68,8 @@ const Checkout = ({paymentSuccessHandler}) => {
                             <option value="USD">💵 USD</option>
                             <option value="EUR">💶 Euro</option>
                     </select>
-                    <PayPalButtons 
+                    <PayPalButtons
+                     
                         style={{ 
                             layout: "vertical",
                             
@@ -76,7 +78,8 @@ const Checkout = ({paymentSuccessHandler}) => {
                         onApprove={(data, actions) => onApproveOrder(data, actions)}
                     />
                 </>
-            )}
+            ) : <></>
+        }
         </div>
     );
 }

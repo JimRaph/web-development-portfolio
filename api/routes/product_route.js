@@ -13,6 +13,7 @@ productRouter.get('/', expressAsyncHandler(async (req, res) => {
 
 // Fetch a single product by id from the database
 productRouter.get('/:id', expressAsyncHandler(async (req, res) => {
+    console.log(req.params.id)
      const product = await productSchema.findById(req.params.id);
      if (product) {
          res.status(200).json(product);
@@ -39,5 +40,14 @@ productRouter.post('/', expressAsyncHandler(async (req, res) => {
     }
    
 }));
+
+productRouter.get('/:id/cart', expressAsyncHandler( async (req, res)=>{
+    const cart = await productSchema.findById(req.params.id);
+    if(cart){
+        res.status(200).json(cart)
+    }else{
+        res.status(404).json({message: 'CartItems not found'})
+    }
+}))
 
 export default productRouter

@@ -22,7 +22,14 @@ const ProductDetail = () => {
 
 
   const addToCartHandler = () => {
-    dispatch(addToCart(id, quantity))
+    if(quantity > 0){
+      const user = JSON.parse(localStorage.getItem('userinfo'))
+      // console.log('pd ', id)
+      dispatch(addToCart(id, quantity, user._id))
+    } else{
+      return alert('You cannot add to cart an item with quantity of 0')
+    }
+
   }
 
   

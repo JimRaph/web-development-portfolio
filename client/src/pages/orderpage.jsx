@@ -10,110 +10,134 @@ import { PayPalScriptProvider } from "@paypal/react-paypal-js"
 import Checkout from "../components/paypal";
 import { base_url } from "../redux/constants/url";
 import { ORDER_RESET } from "../redux/constants/order_constant";
+// import { CLEAR } from "../redux/constants/cart_constant";
 import { orderPaymentDone, orderPostDb } from "../redux/actions/order_action";
 import { clearCart } from "../redux/actions/cart_action";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { saveShippingAddress } from "../redux/actions/cart_action";
+import { saveShippingAddress, loadShippingAddress } from "../redux/actions/cart_action";
+
 
 // Main Component
 export default function OrderPage() {
+
+  const loginReducer = useSelector((state) =>state.loginReducer)
+  const {user} = loginReducer;
+
   const carts = useSelector((state) => state.cartReducer);
   const { cartItems, shippingAddress } = carts;
 
 
-  // console.log(carts)
+
+
+  const cartItem = cartItems.filter((Item) =>      
+    Item.user === user._id   
+  )
+ 
+
   // Calculate Subtotal
-  const subtotal = cartItems.reduce(
+  const subtotal = cartItem.reduce(
     (total, product) => total + product.price * product.qty,
     0
   );
 
   const shippingFee = 10.0;
   const tax = subtotal * 0.05; // Example tax at 5%
-  const total = subtotal + shippingFee + tax;
+  const total = subtotal + shippingFee + tax; 
 
 //SHIPPING ADDRESS 
-const [address, setAddress] = useState(null)
-const [city, setCity] = useState(null)
-const [postalCode, setPostalCode] = useState(null)
-const [country, setCountry] = useState(null)
+  const [address, setAddress] = useState(null)
+  const [city, setCity] = useState(null)
+  const [postalCode, setPostalCode] = useState(null)
+  const [country, setCountry] = useState(null)
 
-const dispatch = useDispatch()
+  const dispatch = useDispatch()
 
-const saveShippingAddressHandler = () =>{
-  dispatch(saveShippingAddress({
-    address, city, postalCode, country
-  }))
-}
-
-//PAYPAL INTEGRATION
-const [clientId, setClientId] = useState()
-const [paymentResult, setPaymentResult] = useState({})
-
-const orderReducer = useSelector((state) => state.orderReducer)
-const cartReducer = useSelector((state) => state.cartReducer)
-// console.log(orderReducer)
-const {order, success} = orderReducer
-const {saved} = cartReducer
-
-const Navigate = useNavigate()
-
-
-const getClientIdHandler = async () =>{
-  const {data} = await axios.get(`${base_url}/api/paypal/`);
-  setClientId(data)
-}
-
-useEffect(() => {
-  getClientIdHandler()
-
-  // console.log(clientId)
-  if(success){
-    // console.log('he')
-   
-    dispatch({type: ORDER_RESET})
-    //UPDATE DB WITH PAYMENT RESULT
-    // console.log('heell')
-    dispatch(orderPaymentDone(order._id, paymentResult))
-    // console.log('hello world')
-    Navigate(`/order-confirmation/${order._id}`, {})
-  }
-}, [paymentResult, order])
-
-
-const initialOptions = {
-  "client-id": clientId || "",
-  currency: "USD",
-  intent: "capture",
-};
-
-
-const paymentSuccessHandler = async(paymentResult) => {
-  try{
-    // console.log('this is successful')
-    setPaymentResult(paymentResult)
-    // console.log(paymentResult)
-    dispatch(orderPostDb({
-      orderItems: cartItems,
-      shippingAddress: shippingAddress,
-      totalPrice: total,
-      taxPrice: tax,
-      shippingPrice: shippingFee,
-      price: subtotal,
-      paymentMethod: "paypal"
+  const saveShippingAddressHandler = () =>{
+    dispatch(saveShippingAddress({
+      address, city, postalCode, country, userId:user._id
     }))
-    dispatch(clearCart())  
-  }catch(err){
-    // console.log(err)
+    
   }
-}
 
-// console.log(orderReducer)
+  //PAYPAL INTEGRATION
+  const [clientId, setClientId] = useState()
+  const [paymentResult, setPaymentResult] = useState({})
 
-if(!clientId){
-  return <div>Loading...</div>
-}
+  const orderReducer = useSelector((state) => state.orderReducer)
+  // const cartReducer = useSelector((state) => state.cartReducer)
+  // console.log(orderReducer)
+  const {order, success} = orderReducer
+  // const {saved} = cartReducer
+
+  const Navigate = useNavigate()
+
+
+  const getClientIdHandler = async () =>{
+    const {data} = await axios.get(`${base_url}/api/paypal/`);
+    setClientId(data)
+  }
+
+  useEffect(()=>{
+    dispatch(loadShippingAddress(user._id))
+  }, [])
+
+  useEffect(() => {
+    
+    getClientIdHandler()
+
+    // console.log(clientId)
+    if(success){
+      // console.log('he')
+    
+      dispatch({type: ORDER_RESET})
+      //UPDATE DB WITH PAYMENT RESULT
+      // console.log('heell')
+      dispatch(orderPaymentDone(order._id, paymentResult))
+      // console.log('hello world')
+      Navigate(`/order-confirmation/${order._id}`, {})
+    }
+  }, [paymentResult, order])
+
+
+  const initialOptions = {
+    "client-id": clientId || "",
+    currency: "USD",
+    intent: "capture",
+  };
+
+  // useEffect(()=>{
+  //   dispatch({type: CLEAR})
+  // })
+  const shippingAddressTrue = (Object.keys(shippingAddress).length !== 0)
+
+
+  const paymentSuccessHandler = async (paymentResult) => {
+    try{
+
+      // console.log('this is successful')
+      setPaymentResult(paymentResult)
+      // console.log(paymentResult)
+      dispatch(orderPostDb({
+        orderItems: cartItems,
+        shippingAddress: shippingAddress,
+        totalPrice: total,
+        taxPrice: tax,
+        shippingPrice: shippingFee,
+        price: subtotal,
+        paymentMethod: "paypal"
+      }))
+      dispatch(clearCart())  
+    }catch(err){
+      // console.log(err)
+    }
+  }
+
+  // console.log(orderReducer)
+
+  if(!clientId){
+    return <div>Loading...</div>
+  }
 
   return (
     <LayOut>
@@ -122,12 +146,16 @@ if(!clientId){
         <div className="w-full  bg-white p-6 rounded-lg shadow-sm">
           <h2 className="text-2xl font-semibold mb-4">Your Cart</h2>
         
-            <CartItemList cartItem={cartItems}/>
+          {!cartItem.length > 0 && <div className=' top-[40%] left-[10%]'>
+                          <p className='text-sm'>Nothing here - why don't you add items to your cart?</p>
+                        </div>
+          }
+            <CartItemList cartItem={cartItem}/>
 
         </div>
 
         {/* Order Summary & shipping address*/}
-        <div className="flex-col flex justify-between w-full p-6 rounded-lg shadow-sm">
+        <div className="flex-col relative flex justify-between w-full p-6 rounded-lg shadow-sm">
        
             <div className="flex-col">  
                 <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
@@ -161,13 +189,16 @@ if(!clientId){
             </div> */}
 
             <PayPalScriptProvider options={initialOptions}>
-              <Checkout paymentSuccessHandler={paymentSuccessHandler}/>
+              <Checkout 
+              paymentSuccessHandler={paymentSuccessHandler}
+              shippingAddressTrue={shippingAddressTrue}
+              />
             </PayPalScriptProvider>
               <p className="text-xs text-gray-500 mt-2 text-center">
                   * Secure payment via PayPal.
               </p>
             </div>
-
+ 
 
             {/* <div className = "bottom-0 flex-col"> 
                 <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
@@ -268,8 +299,7 @@ if(!clientId){
                 onClick={saveShippingAddressHandler}
                  className="w-full flex items-center justify-center bg-blue-800 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md"
                  >
-                  { saved ? "Address saved" :
-                  "Save Shipping Address"}
+                  Save Shipping Address
                 </button>
             </div>
 

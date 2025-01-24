@@ -91,11 +91,9 @@ export const orderPaymentDone = (orderId, paymentResult) => async (dispatch, get
                 payload: message,
             });
         }
-    };
-
+    }
 
 //detail req
-
 export const orderDetail = (id) => async (dispatch, getState) => {
     try {
         // console.log(id)

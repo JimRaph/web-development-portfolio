@@ -14,10 +14,19 @@ const Header = () => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
 
-  const quantityInCart = useSelector((state) => state.cartReducer.cartItems.reduce((total, product) => total + product.qty, 0))
-  
-  // const cartitems = useSelector((state) => state.cartReducer.cartItems)
-  
+
+  const cartitems = useSelector((state) => state.cartReducer.cartItems)
+  // console.log(cartitems)
+
+  const cartItemResult = useSelector((state) => state.cartReducer.cartItems)
+
+  const cartItem = cartItemResult.filter((item) => item?.user === user._id )
+  // console.log(cartItem)
+  const quantityInCart = cartItem.reduce((total, item) => total + item.qty, 0)
+  // const t = useSelector((state) => state.cartReducer.cartItems.reduce((total, product) => total + product.qty, 0))
+  // console.log(quantityInCart)
+
+
   const logOutHandler = () => {
     dispatch(logoutAction());
   };

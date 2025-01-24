@@ -9,26 +9,33 @@ const userRouter = express.Router();
 
 
 userRouter.post("/register", expressAsyncHandler(async (req, res) =>{
+    
     const {name, email, password} = req.body;
-
-    const existingUser = await userSchema.findOne({email});
-    if(existingUser){
-        res.status(400).send("User already exists")
-    }
+    console.log(name, email, password)
     
     try{
-        const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password, salt)
-        const newUser = new userSchema({name, email, password: hashedPassword})
-        await newUser.save()
-        
-        res.status(200).json({
+
+        const existingUser = await userSchema.findOne({email});
+
+        if(existingUser){
+            return res.status(400).json({error: 'User already exists'})
+        } else{
+            const salt = await bcrypt.genSalt(10)
+            const hashedPassword = await bcrypt.hash(password, salt)
+            const newUser = new userSchema({name, email, password: hashedPassword})
+            await newUser.save()
+            
+           return res.status(200).send({
             id: newUser.id,
             name: newUser.name,
             email: newUser.email,
             isAdmin: newUser.isAdmin,
             createdAt: newUser.createdAt
         })
+        }
+        
+        
+        
     }catch(err){
         res.status(500).send("Error registering user")
     }
