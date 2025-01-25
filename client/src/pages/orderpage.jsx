@@ -75,6 +75,7 @@ export default function OrderPage() {
 
   const getClientIdHandler = async () =>{
     const {data} = await axios.get(`${base_url}/api/paypal/`);
+    console.log(data)
     setClientId(data)
   }
 
