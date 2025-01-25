@@ -86,7 +86,7 @@ export default function OrderPage() {
     
     getClientIdHandler()
 
-    // console.log(clientId)
+    console.log(clientId)
     if(success){
       // console.log('he')
     

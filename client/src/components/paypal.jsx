@@ -68,8 +68,7 @@ const Checkout = ({paymentSuccessHandler, shippingAddressTrue}) => {
                             <option value="USD">💵 USD</option>
                             <option value="EUR">💶 Euro</option>
                     </select>
-                    <PayPalButtons
-                     
+                    <PayPalButtons                     
                         style={{ 
                             layout: "vertical",
                             
