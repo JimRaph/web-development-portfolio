@@ -100,11 +100,13 @@ export default function OrderPage() {
     }
   }, [paymentResult, order])
 
-
+console.log(clientId)
   const initialOptions = {
     "client-id": clientId || "",
     currency: "USD",
     intent: "capture",
+    components: "buttons",
+    "data-log-level": "debug",
   };
 
   // useEffect(()=>{
@@ -196,7 +198,7 @@ export default function OrderPage() {
               />
             </PayPalScriptProvider>
               <p className="text-xs text-gray-500 mt-2 text-center">
-                  * Secure payment via PayPal.
+                  * Secured payment via PayPal.
               </p>
             </div>
  
