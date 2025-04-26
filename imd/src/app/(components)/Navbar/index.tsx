@@ -1,7 +1,7 @@
 'use client'
 
 import { useAppDispatch, useAppSelector } from '@/app/redux'
-import { setIsDarkMode, setIsSidebarCollapsed } from '@/state'
+import { setIsSidebarCollapsed } from '@/state'
 import { Bell, Menu, MoonIcon, Settings, Sun } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
@@ -16,13 +16,6 @@ const Navbar = () => {
         dispatch(setIsSidebarCollapsed(!isSidebarCollapsed))
     }
 
-    const isDarkMode = useAppSelector(
-        (state)=>state.global.isDarkMode
-    );
-
-    const toggleTheme = () =>{
-        dispatch(setIsDarkMode(!isDarkMode))
-    }
 
   return (
     <div className='flex justify-between items-center w-full mb-7'>
@@ -46,17 +39,6 @@ const Navbar = () => {
 
         <div className='flex justify-between items-center gap-5'>
             <div className="hidden md:flex justify-between items-center gap-5">
-                <div>
-                    <button onClick={toggleTheme}>
-                        {isDarkMode ? (
-                            
-                            <Sun className='cursor-pointer text-gray-500' size={24} />
-
-                        ) : (
-                            <MoonIcon className='cursor-pointer text-gray-500' size={24} />
-                        )}
-                    </button>
-                </div>
                 <div className="relative">
                     <Bell className='cursor-pointer text-gray-500' size={24} />
                     <span className='absolute -top-2 -right-2 inline-flex items-center justify-center px-[0.4rem] py-1 text-xs font-semibold leading-none text-red bg-red-400 rounded-full'>
@@ -64,9 +46,11 @@ const Navbar = () => {
                     </span>
                 </div>
                 <hr className='w-0 h-7 border border-solid border-l border-gray-300 mx-3' />
-                <div className="flex items-center gap-3 cursor-pointer">
-                    <div className="w-9 h-9">image</div>
-                    <span className="fontsemibold">EJ</span>
+                <div className="flex items-center gap-1 cursor-pointer">
+                    <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-around">
+                        <span className='w-4 h-4 rounded-full bg-amber-50'></span>
+                    </div>
+                    <span className="font-semibold">User</span>
                 </div>
             </div>
             <Link href="/setting">

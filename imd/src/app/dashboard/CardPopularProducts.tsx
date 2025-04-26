@@ -30,7 +30,9 @@ const CardPopularProducts = () => {
                             <div key={product.productId}
                             className='flex items-center justify-between border-b-1 py-7 px-5 gap-3 border-b-gray-200'>
                                 <div className="flex items-center gap-3">
-                                    <div>img</div>
+                                    <div className='w-10 h-10 rounded-full bg-blue-400 flex items-center justify-center'>
+                                        <div className='w-5 h-5 rounded-full bg-blue-900'></div>
+                                    </div>
                                     <div className="flex flex-col justify-between gap-1">
                                         <div className="font-bold text-gray-700">{product.name}</div>
                                         <div className="flex text-sm items-center">

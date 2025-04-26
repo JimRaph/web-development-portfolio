@@ -67,7 +67,7 @@ const Products = () => {
             className='border shadow rounded-md p-4 max-w-full w-full mx-auto'
             >
               <div className="flex flex-col items-center">
-                  <span>Image</span>
+                  <span className='w-8 h-1 bg-blue-800'></span>
                   <h3 className='text-lg text-gray-900 font-semibold'>{product.name}</h3>
                   <p className="text-gray-800">${product.price.toFixed(2)}</p>
                   <div className="text-sm text-gray-600 mt-1">

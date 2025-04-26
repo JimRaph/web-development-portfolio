@@ -6,14 +6,15 @@
     box-sizing: border-box;
 }
 
+
 html,
 body,
 #root,
-.app{
+.app {
     height: 100%;
     width: 100%;
-    @apply text-sm bg-gray-500 text-gray-900;
 }
+
 
 @media (min-width: 768px){
     .custom-grid-rows{

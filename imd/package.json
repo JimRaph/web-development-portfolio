@@ -24,6 +24,7 @@
     "react-redux": "^9.2.0",
     "recharts": "^2.15.2",
     "redux-persist": "^6.0.0",
+    "tw-colors": "^3.3.2",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
