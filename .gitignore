@@ -1,0 +1,18 @@
+# Ignore node modules
+node_modules/
+
+# Ignore build output
+.imd/.next/
+imd/.next/
+
+# Ignore environment variables
+.env
+imd/.env
+server/.env
+
+# Ignore logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.DS_Store
