@@ -1,7 +1,5 @@
 "use client"
 
-import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
-// import { BriefcaseIcon } from '@heroicons/react/24/outline';
 import { BriefcaseIcon } from '@heroicons/react/24/solid';
 import { BookOpenIcon } from '@heroicons/react/24/solid';
 import { UserGroupIcon } from '@heroicons/react/24/solid';

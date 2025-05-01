@@ -5,6 +5,7 @@ import { EnvelopeIcon,ChatBubbleLeftIcon, PaperAirplaneIcon, ChatBubbleLeftRight
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import toast from 'react-hot-toast';
 
 
 const Contacts = [
@@ -102,13 +103,14 @@ const Contact = () => {
 
   
   const handleFormSubmitAttempt = (data: formData) => {
+    // console.log(data)
     if (!isValid) return;
     setShowCaptchaModal(true); 
   };
 
   const executeCaptcha = async () => {
     if (!window.grecaptcha) {
-      alert('CAPTCHA not loaded. Please try again.');
+      toast.error('CAPTCHA not loaded. Please try again.');
       return;
     }
 
@@ -120,12 +122,16 @@ const Contact = () => {
           {action: 'submit'}
         );
 
-        setCaptchaToken(token);
+        // setCaptchaToken(token);
         submitFormWithToken(token);
       })
 
-    } catch (error) {
-      alert('CAPTCHA verification failed');
+    }catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`CAPTCHA verification failed: ${error.message}`);
+      } else {
+        toast.error('CAPTCHA verification failed: Unknown error');
+      }
     } finally {
       setShowCaptchaModal(false);
     }
@@ -156,20 +162,23 @@ const Contact = () => {
       });
 
       const res = await result.json();
-      console.log("RES: ", res)
 
       if (result.ok) {
         const submitBtn = formRef.current?.querySelector('#submit');
         if (submitBtn) submitBtn.textContent = 'Message Sent!';
+        toast.success('Message sent')
         reset();
       } else {
-        console.error("ERROR: ", res.error)
         console.log("RESS: ", res)
-        alert("Failed to send message!");
-        console.error("ERROR: ", res.error)
+        toast.error("Failed to send message");
+        toast.error("Error occured: ", res.error)
       }
-    } catch (error) {
-      alert("Network error");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Network error: ${error.message}`);
+      } else {
+        toast.error('Network error: Unknown error');
+      }
     }
   };
 
@@ -188,7 +197,7 @@ const Contact = () => {
           ease: [0.4, 0, 0.2, 1],
         }}
         className='w-5/6 m-auto'>
-        <h1 className='text-5xl text-amber-400 font-semibold mb-2'>Let's Connect</h1>
+        <h1 className='text-5xl text-amber-400 font-semibold mb-2'>Let&apos;s Connect</h1>
         <h2 className='text-xl text-[#2E2E2E] mb-10 opacity-90'>
           Open to Web3 projects, collaboration, and creative roles
         </h2>
@@ -270,7 +279,7 @@ const Contact = () => {
         {showCaptchaModal && (
           <div className="fixed inset-0 bg-black/50 text-gray-600 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg max-w-sm w-full">
-              <h3 className="text-lg font-bold mb-4">Verify You're Human</h3>
+              <h3 className="text-lg font-bold mb-4">Verify You&apos;re Human</h3>
               <p className="mb-4">Please complete the CAPTCHA to send your message</p>
               
               <div 

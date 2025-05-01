@@ -42,7 +42,7 @@ const Skills = () => {
               <div className="text-amber-400 text-3xl font-semibold mb-2">01</div>
               <h3 className="text-white text-xl font-semibold mb-4">Community Management</h3>
               <p className="text-gray-300 leading-relaxed">
-                I build and engage communities aligned with your project's mission, creating strategies that drive growth and retention.
+                I build and engage communities aligned with your project&apos;s mission, creating strategies that drive growth and retention.
               </p>
             </div>
       

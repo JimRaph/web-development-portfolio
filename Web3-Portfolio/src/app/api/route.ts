@@ -21,7 +21,7 @@ const verifyCaptcha = async (token: string): Promise<boolean> => {
     );
     return response.data.success;
   } catch (error) {
-    return false;
+    return error ? false : true
   }
 };
 

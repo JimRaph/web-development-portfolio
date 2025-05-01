@@ -1,7 +1,6 @@
 "use client"
 
 import Image from 'next/image'
-import { motion } from 'framer-motion';
 import scrollToSection from '../Scroller';
 
 
@@ -17,7 +16,7 @@ const Landing = () => {
     {/* Text  */}
     <div className="md:w-1/2 space-y-3 md:space-y-4 mt-12 md:mt-32 text-center md:text-left">
       <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#2E2E2E]">
-        Hi, I'm <span className="text-[#C21807]">Jimmy</span>
+        Hi, I&apos;m <span className="text-[#C21807]">Jimmy</span>
       </h1>
       <h2 className="text-xl md:text-2xl font-semibold text-[#2E2E2E]">
         Web3 Enthusiast
