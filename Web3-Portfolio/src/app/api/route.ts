@@ -97,7 +97,7 @@ export async function POST(request: Request) {
     const sanitizedMessage = message.replace(/<[^>]*>?/gm, ''); // Basic HTML stripping
 
     // Send email with error handling
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: 'Contact Form <onboarding@resend.dev>',
       to: [process.env.MY_EMAIL!],
       subject: `New message from ${name.trim()}`,
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error('Email failed:', error);
-      // console.log('data')
+
       return NextResponse.json(
         { error: 'Failed to send message. Please try again later.' }, // Generic error
         { status: 502 } // Bad Gateway
