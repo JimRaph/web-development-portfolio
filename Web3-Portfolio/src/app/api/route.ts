@@ -110,6 +110,7 @@ export async function POST(request: Request) {
 
     if (error) {
       console.error('Email failed:', error);
+      // console.log('data')
       return NextResponse.json(
         { error: 'Failed to send message. Please try again later.' }, // Generic error
         { status: 502 } // Bad Gateway
