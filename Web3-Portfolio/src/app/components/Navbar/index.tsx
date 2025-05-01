@@ -22,7 +22,7 @@ const Navbar = ({topScrolled}: navbarProp) => {
 
   return (
 <nav className={`fixed w-full bg-[#1A1A1A]  z-50 shadow-lg border-b border-[#FFD700]/20
-  ${topScrolled ? "bg-[#FFA500]" : ""}`}>
+  ${topScrolled ? "bg-[#FFA500]/80" : "bg-[#FFA500]"}`}>
   <div className="max-w-7xl mx-auto px-6 py-4">
     <div className="flex justify-between items-center">
 
@@ -43,10 +43,12 @@ const Navbar = ({topScrolled}: navbarProp) => {
           mix-blend-overlay"></span>
         </span> ) :(
           
-          <span className="text-2xl font-extrabold bg-clip-text text-transparent 
-        bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FF4500]">
-            EJ
-          </span>
+            <div className="bg-gray-800 rounded-full p-2 cursor-default">
+              <span className="text-2xl font-extrabold bg-clip-text text-transparent 
+          bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FF4500] m-1">
+              EJ
+            </span>
+            </div>
         )}
       </motion.div>
 
@@ -56,7 +58,7 @@ const Navbar = ({topScrolled}: navbarProp) => {
           <motion.button
             key={index}
             onClick={()=>scrollToSection(item.href)}
-            className={`relative text-lg font-medium ${topScrolled ? "text-gray-800" :"text-[#F5F5DC]"}  hover:text-[#FFD700] transition-colors`}
+            className={`relative text-lg font-medium ${topScrolled ? "text-gray-50" :"text-gray-800"}  hover:text-[#FFD700] transition-colors`}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.5 }}

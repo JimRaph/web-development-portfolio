@@ -56,129 +56,82 @@ declare global{
   }
 }
 
+type ApiResponse = {
+  success?: boolean;
+  error?: string;
+};
+
+
+
 
 const Contact = () => {
 
-
-  const [showCaptchaModal, setShowCaptchaModal] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const { register, handleSubmit, reset, formState: { errors, isValid } } = useForm<formData>({
+  const { 
+    register, 
+    handleSubmit, 
+    reset, 
+    formState: { errors, isValid } 
+  } = useForm<formData>({
     resolver: zodResolver(formSchema),
-    mode: 'onChange' 
+    mode: 'onChange'
   });
 
-  // Load reCAPTCHA script when modal opens
+  // Load reCAPTCHA script once
   useEffect(() => {
-
-    console.log('AWW')
-    if ( !window.grecaptcha) {
-      console.log('OUTER')
-     if(!document.querySelector('script[src*="recaptcha/api.js"]')){
-      console.log('INNER')
-      const script = document.createElement('script');
-      script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`;
-      script.async = true;
-      script.defer = true;
-
-      script.onload = () =>{
-        window.grecaptcha?.ready(()=>{
-          console.log('reCAPTCHA is ready');
-        });
-      };
-
-      script.onerror = () => {
-        console.error('Failed to load reCAPTCHA script');
-      };
-
-      document.body.appendChild(script);
-
-      return ()=>{
-        document.body.removeChild(script)
-       }
-    }
-     }
-  }, []);
-
-  
-  const handleFormSubmitAttempt = (data: formData) => {
-    // console.log(data)
-    if (!isValid) return;
-    setShowCaptchaModal(true); 
-  };
-
-  const executeCaptcha = async () => {
-    if (!window.grecaptcha) {
-      toast.error('CAPTCHA not loaded. Please try again.');
+    if (window.grecaptcha || document.querySelector('script[src*="recaptcha/api.js"]')) {
       return;
     }
 
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`;
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const onSubmit = async (data: formData) => {
+    if (!isValid || isSubmitting) return;
+    setIsSubmitting(true);
+
     try {
-
-      window.grecaptcha.ready(async()=>{
-        const token = await window.grecaptcha!.execute(
-          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
-          {action: 'submit'}
-        );
-
-        // setCaptchaToken(token);
-        submitFormWithToken(token);
-      })
-
-    }catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(`CAPTCHA verification failed: ${error.message}`);
-      } else {
-        toast.error('CAPTCHA verification failed: Unknown error');
+      if (!window.grecaptcha) {
+        throw new Error('CAPTCHA service not available');
       }
-    } finally {
-      setShowCaptchaModal(false);
-    }
-  };
 
-  const submitFormWithToken = async (token: string) => {
-    const formData = formRef.current 
-      ? new FormData(formRef.current) 
-      : new FormData();
+      const token = await window.grecaptcha.execute(
+        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
+        { action: 'submit' }
+      );
 
-      console.log({
-        name: formData.get('name'),
-        email: formData.get('email'),
-        message: formData.get('message'),
-        captcha: token
-      })
-
-    try {
-      const result = await fetch('/api', {
+      const response = await fetch('/api', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formData.get('name'),
-          email: formData.get('email'),
-          message: formData.get('message'),
+          ...data,
           captcha: token
         })
       });
 
-      const res = await result.json();
+      const result: ApiResponse = await response.json();
 
-      if (result.ok) {
-        const submitBtn = formRef.current?.querySelector('#submit');
-        if (submitBtn) submitBtn.textContent = 'Message Sent!';
-        toast.success('Message sent')
-        reset();
-      } else {
-        console.log("RESS: ", res)
-        toast.error("Failed to send message");
-        toast.error("Error occured: ", res.error)
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to send message');
       }
+
+      toast.success('Message sent successfully!');
+      reset();
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(`Network error: ${error.message}`);
-      } else {
-        toast.error('Network error: Unknown error');
-      }
+      console.error('Submission error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to send message');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -227,7 +180,7 @@ const Contact = () => {
 
       {/* Right Side - Form */}
       <div className='md:w-2/2 bg-[#F5F5DC] p-10 mt-20 flex justify-center items-center'>
-        <form onSubmit={handleSubmit(handleFormSubmitAttempt)}
+        <form onSubmit={handleSubmit(onSubmit)}
         ref={formRef}
         className='w-full max-w-lg bg-white p-8 rounded-xl shadow-lg border border-[#F5F5DC]'>
           <div className='mb-6'>
@@ -267,45 +220,16 @@ const Contact = () => {
           </div>
           
           <button
-          id='submit' 
+            id='submit'
             type='submit'
-            className='w-full py-3 bg-gradient-to-r from-[#FFA500] to-[#FFD700] text-[#4b4949] font-bold hover:opacity-90 rounded-lg shadow-md hover:shadow-lg transition-all'
+            disabled={isSubmitting || !isValid}
+            className={`w-full py-3 bg-gradient-to-r from-[#FFA500] to-[#FFD700] text-[#4b4949] font-bold rounded-lg shadow-md transition-all ${
+              isSubmitting || !isValid ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90 hover:shadow-lg'
+            }`}
           >
-            Send A Message
+            {isSubmitting ? 'Sending...' : 'Send A Message'}
           </button>
         </form>
-
-          {/* CAPTCHA Modal  */}
-        {showCaptchaModal && (
-          <div className="fixed inset-0 bg-black/50 text-gray-600 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg max-w-sm w-full">
-              <h3 className="text-lg font-bold mb-4">Verify You&apos;re Human</h3>
-              <p className="mb-4">Please complete the CAPTCHA to send your message</p>
-              
-              <div 
-                className="g-recaptcha" 
-                data-sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                data-size="normal"
-              />
-              
-              <div className="flex gap-2 mt-4">
-                <button
-                  onClick={executeCaptcha}
-                  className="px-4 py-2 bg-amber-500 text-white rounded"
-                >
-                  Verify
-                </button>
-                <button
-                  onClick={() => setShowCaptchaModal(false)}
-                  className="px-4 py-2 bg-gray-200 rounded"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
 
       </div>
     </div>
