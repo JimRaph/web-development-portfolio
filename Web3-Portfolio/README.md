@@ -35,5 +35,5 @@ To get the project running locally, follow these steps:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/EJ-Portfolio.git
-   cd EJ-Portfolio
+   https://github.com/JimRaph/Web3-Portfolio.git
+   cd portfolio
