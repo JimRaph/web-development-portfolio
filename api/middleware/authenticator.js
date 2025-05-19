@@ -3,7 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import userSchema from "../models/user_model.js";
 import dotenv from 'dotenv';
 
-// dotenv.config();
+dotenv.config();
 
 const authenticate = expressAsyncHandler( async (req, res, next) => {
 

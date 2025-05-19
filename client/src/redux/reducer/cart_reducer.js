@@ -63,7 +63,7 @@ export const cartReducer = (
 
 
         case CART_SAVE_SHIPPING_ADDRESS:
-            const { userId, ...addressData } = action.payload;  // Extract userId and address data
+            const { userId, ...addressData } = action.payload;  
             return {
                 ...state,
                 shippingAddress: action.payload
