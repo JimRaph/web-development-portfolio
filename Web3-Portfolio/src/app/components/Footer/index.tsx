@@ -1,10 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { EnvelopeIcon, PaperAirplaneIcon, CodeBracketIcon } from '@heroicons/react/24/outline';
+import scrollToSection from '../Scroller';
+
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   
+    const footItems = [
+    { name: 'Home', href: 'landing' },
+    { name: 'Skills', href: 'skills' },
+    { name: 'Projects', href: 'projects' },
+    { name: 'Contact', href: 'contacts' }
+  ];
+
   return (
     <footer className="bg-gradient-to-b from-[#1E1E1E] to-[#2E2E2E] pt-12 pb-6 px-4">
       <div className="max-w-6xl mx-auto">
@@ -37,19 +46,22 @@ const Footer = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="flex flex-col items-center md:items-start"
+            className="flex flex-col items-center md:items-start text-[#F5F5DC]/80"
           >
             <h3 className="text-[#FFA500] text-sm font-medium mb-4 tracking-wider">EXPLORE</h3>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-              {['Home', 'Skills', 'Projects', 'Contact'].map((item, index) => (
-                <a 
-                  key={index}
-                  href={`#${item.toLowerCase()}`}
-                  className="text-[#F5F5DC]/80 hover:text-[#FFD700] transition-colors text-sm"
-                >
-                  {item}
-                </a>
-              ))}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+              {footItems.map((item, index) => (
+          <motion.button
+            key={index}
+            onClick={()=>scrollToSection(item.href)}
+            className={`relative text-left hover:text-[#FFD700] `}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.5 }}
+          >
+            {item.name}
+          </motion.button>
+        ))}
             </div>
           </motion.div>
 

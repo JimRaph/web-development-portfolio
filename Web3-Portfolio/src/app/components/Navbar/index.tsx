@@ -17,7 +17,7 @@ const Navbar = ({topScrolled}: navbarProp) => {
     { name: 'Home', href: 'landing' },
     { name: 'Skills', href: 'skills' },
     { name: 'Projects', href: 'projects' },
-    { name: 'Contact', href: 'contact' }
+    { name: 'Contact', href: 'contacts' }
   ];
 
   return (
