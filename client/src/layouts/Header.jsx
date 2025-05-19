@@ -35,9 +35,10 @@ const Header = () => {
   
     return (
       <>
-        <nav className="bg-white border-b-blue-800 border-b-2">
+        <nav className="bg-white shadow-zinc-400 shadow-sm">
           
-          <div className=" max-w-2xl lg:max-w-7xl flex flex-wrap items-center justify-between mx-auto pt-3">
+          <div className=" max-w-6xl flex flex-wrap items-center justify-between 
+          mx-auto pt-3 px-[3rem] xl:px-[0rem]">
            
             {/* LOGO  */}
             <Link to = "/" 

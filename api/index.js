@@ -26,35 +26,35 @@ app.use("/api/paypal", (req, res) => {
     res.send(process.env.PAYPAL_CLIENT)
 })
 
-// const run = async() => {
-//     try {
-//         await DbConnect(process.env.MONGO_URL);
-//         app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-//     } catch (error) {
-//         console.error(error);
-//         process.exit(1);
-//     }
-// }
+const run = async() => {
+    try {
+        await DbConnect(process.env.MONGO_URL);
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    } catch (error) {
+        console.error(error);
+        process.exit(1);
+    }
+}
 
 
-// run();
+run();
 
 
-// export default app;
+export default app;
 
 // Connect DB once when the module is loaded
-let dbConnected = false;
+// let dbConnected = false;
 
-const connectDB = async () => {
-  if (!dbConnected) {
-    await DbConnect(process.env.MONGO_URL);
-    dbConnected = true;
-  }
-};
+// const connectDB = async () => {
+//   if (!dbConnected) {
+//     await DbConnect(process.env.MONGO_URL);
+//     dbConnected = true;
+//   }
+// };
 
-const handler = async (req, res) => {
-  await connectDB();
-  return app(req, res); 
-};
+// const handler = async (req, res) => {
+//   await connectDB();
+//   return app(req, res); 
+// };
 
-export default handler;
+// export default handler;

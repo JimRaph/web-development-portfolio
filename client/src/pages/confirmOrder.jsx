@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import LayOut from "../layouts/layout";
 import { orderDetail } from "../redux/actions/order_action";
+import RotateLoader from "react-spinners/RotateLoader";
 // import { useParams } from "react-router-dom";
 // import { useDispatch, useSelector } from "react-redux";
 // import { orderDetailAction } from "../Redux/Actions/Order";
@@ -36,9 +37,11 @@ const OrderConfirmation = () => {
   return (
     <LayOut>
       {loading ? (
-        <h1>Loading</h1>
-      ) : (
-        <div className="flex items-center justify-center min-h-screen bg-white">
+            <div className=" absolute top-[50%] left-[50%]">
+            <RotateLoader color="blue" loading={loading}
+            />
+            </div>): (
+        <div className="flex mt-[3rem] items-center justify-center min-h-screen bg-white">
           {confettiActive && <Confetti />}
           <div className="p-8 rounded-lg shadow-lg text-center">
             <h1 className="text-4xl font-bold text-blue-600 mb-4">

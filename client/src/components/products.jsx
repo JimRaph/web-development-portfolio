@@ -14,20 +14,21 @@ const Products = () => {
   }, [dispatch]);
   
     return (
-      <div>
+
+         <div>
           {loading ? (
             <div className=" absolute top-[50%] left-[50%]">
             <RotateLoader color="blue" loading={loading}
             />
             </div>) : error ? (<h1>{error}</h1>)
-          : (
+          :  (
 
             <>
       <div className="bg-white">
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900">Customers also purchased</h2>
 
-          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8" id="products">
             {products.map((product) =>(
               <div className="group relative" key={product._id}>
               <Link to ={`/detail/${product._id}`}>

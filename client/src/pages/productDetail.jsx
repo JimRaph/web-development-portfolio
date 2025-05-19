@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { productAction } from "../redux/actions/product_action";
 import { addToCart } from "../redux/actions/cart_action";
+import RotateLoader from "react-spinners/RotateLoader";
 
 const ProductDetail = () => {
 
@@ -35,8 +36,14 @@ const ProductDetail = () => {
   
   return (
     <LayOut>
-      {loading? (<h1>Loading...</h1>) : error ? (<h1>Error</h1>) :
-    (
+
+     <div>
+          {loading ? (
+            <div className=" absolute top-[50%] left-[50%]">
+            <RotateLoader color="blue" loading={loading}
+            />
+            </div>) : error ? (<h1>{error}</h1>)
+          : (
       
       <section className="text-gray-600 body-font overflow-hidden">
         <div className="container px-5 py-24 mx-auto">
@@ -167,6 +174,8 @@ const ProductDetail = () => {
       </section>
 
     )}
+
+      </div>
       
     </LayOut>
   );

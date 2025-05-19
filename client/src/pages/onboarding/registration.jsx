@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { registerAction } from '../../redux/actions/register_action';
 import { Link, Navigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import RotateLoader from 'react-spinners/RotateLoader';
 
 
 
@@ -33,10 +34,9 @@ const Registration = () => {
 
     return(
         <>
-            {loading ? (<h1>loading</h1>)
-                :(
+            {error ? (<div>Error occurred, please try again</div>) : (
                     <section className="bg-gray-50 dark:bg-gray-900">
-                <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+                <div className="flex flex-col items-center justify-center py-[12rem] sm:py-[8rem] px-6  mx-auto md:h-screen lg:py-0">
                     {/* <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"> */}
                         {/* <img className=" h-8 mr-2" src="../src/assets/logo.png" alt="logo" /> */}
                         <Link to = "/" 

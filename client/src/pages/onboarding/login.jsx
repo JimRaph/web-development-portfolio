@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../../redux/actions/login_action";
 import { Link, useNavigate } from "react-router-dom";
+import RotateLoader from "react-spinners/RotateLoader";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -35,9 +36,7 @@ const Login = () => {
 
   return (
     <>
-      {loading ? (
-        <h1>loading</h1>
-      ) : error ? (
+      { error ? (
         <h1>{error}</h1>
         // <h1>error</h1>
       ) : (

@@ -16,6 +16,7 @@ import { clearCart } from "../redux/actions/cart_action";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { saveShippingAddress, loadShippingAddress } from "../redux/actions/cart_action";
+import RotateLoader from "react-spinners/RotateLoader";
 
 
 // Main Component
@@ -139,12 +140,16 @@ console.log(clientId)
   // console.log(orderReducer)
 
   if(!clientId){
-    return <div>Loading...</div>
+    return (
+            <div className=" absolute top-[50%] left-[50%]">
+            <RotateLoader color="blue" loading={!clientId}
+            />
+            </div>)
   }
 
   return (
     <LayOut>
-      <div className=" max-w-screen-xl mx-auto h-fit flex flex-col lg:flex-row justify-center items-start bg-white p-8 gap-8">
+      <div className=" max-w-screen-xl my-[3rem] mx-auto h-fit flex flex-col lg:flex-row justify-center items-start bg-white p-8 gap-8">
         {/* Products Section */}
         <div className="w-full  bg-white p-6 rounded-lg shadow-sm">
           <h2 className="text-2xl font-semibold mb-4">Your Cart</h2>

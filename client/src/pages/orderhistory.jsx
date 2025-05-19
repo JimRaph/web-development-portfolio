@@ -3,6 +3,7 @@ import LayOut from '../layouts/layout';
 import { useDispatch, useSelector } from 'react-redux';
 import { orderList } from '../redux/actions/order_action';
 import moment from 'moment';
+import RotateLoader from 'react-spinners/RotateLoader';
 // import {Loading} from '../c'
 
 const OrderHistory = () =>{
@@ -152,9 +153,13 @@ const OrderHistory = () =>{
     return(
         <div>
             <LayOut >
-                {loading ?(<h1>Loading Order History</h1>) :
+                {loading ?(
+            <div className=" absolute top-[50%] left-[50%]">
+            <RotateLoader color="blue" loading={loading}
+            />
+            </div>):
                 (
-                    <section className="bg-white h-5/6 py-8 antialiased dark:bg-gray-900 md:py-16">
+                    <section className="bg-white my-[3rem] h-5/6 py-8 antialiased dark:bg-gray-900 md:py-16">
                     <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
                       <div className="mx-auto max-w-5xl">
                         <div className="gap-4 sm:flex sm:items-center sm:justify-between">
