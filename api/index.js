@@ -11,7 +11,10 @@ import seedProductRouter from './seeder.js'
 
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors({
+  origin: 'https://lc-e-commerce-frontend.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}))
 
 
 dotenv.config();
@@ -26,10 +29,11 @@ app.use("/api/paypal", (req, res) => {
     res.send(process.env.PAYPAL_CLIENT)
 })
 
+console.log("CONNECTION: ", process.env.MONGO_URL)
 const run = async() => {
     try {
         await DbConnect(process.env.MONGO_URL);
-        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+        app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
     } catch (error) {
         console.error(error);
         process.exit(1);
