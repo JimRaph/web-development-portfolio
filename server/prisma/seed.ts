@@ -45,8 +45,14 @@ async function main() {
     "expenseByCategory.json",
   ];
 
-  await deleteAllData(orderedFileNames);
+  //to deal with foreign keys during deletion
+  await prisma.purchases.deleteMany();
+  await prisma.Sales.deleteMany();
+  await prisma.expenseByCategory.deleteMany();
 
+  //delete data from all the models
+  await deleteAllData(orderedFileNames);
+  
   for (const fileName of orderedFileNames) {
     const filePath = path.join(dataDirectory, fileName);
     const jsonData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
