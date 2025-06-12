@@ -40,7 +40,7 @@ const Hero = () => {
            '>
             <div className='absolute inset-0 top-0 right-0 text-center bg-yellow-500/20'></div>
                 <img 
-                    src="src/assets/hero(2).jpg" 
+                    src="/hero.jpg" 
                     alt="" 
                     className='object-cover w-full h-full z-1 ' 
                 />
