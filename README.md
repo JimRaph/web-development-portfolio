@@ -14,7 +14,7 @@ This project synchronizes Codeforces data for students, including their contest 
   - Calculate problem-solving statistics and generate insights such as rating graphs and heatmaps.
 - **Inactivity Reminders:** Automatically send reminder emails to inactive students.
 - **Scheduling:** Configurable cron jobs to automate data synchronization.
-- **Responsive UI:** Supports mobile and tablet views with light/dark mode toggle (if frontend included).
+- **Responsive UI:** Supports mobile and tablet views with light/dark mode toggle.
 - **CSV Export:** Export student data for reporting.
 
 ---
@@ -40,18 +40,18 @@ This project synchronizes Codeforces data for students, including their contest 
 ### Installation
 
 1. Clone the repository:
-git clone https://github.com/yourusername/codeforces-student-sync.git
+git clone https://github.com/JimRaph/Student-progress-management-system
 cd codeforces-student-sync
 
 2. Install dependencies:
 npm install
 
 3. Create a `.env` file in the root directory with the following variables:
-MONGODB_URI=mongodb://localhost:27017/your_database_name
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-email-password-or-app-password
+MONGODB_URI=
+EMAIL_USER=
+EMAIL_PASS=
 
-4. Seed initial sync configuration (optional but recommended):
+4. Seed initial sync configuration:
 uncomment out the seeding section in the index.js
 Note: after the first run, comment out the seeding area except for
 seedSyncConfig() & startSyncCron()
@@ -62,7 +62,7 @@ seedSyncConfig() & startSyncCron()
 Start the backend server:
 
 
-The API will be available at `http://localhost:3000` (or your configured port).
+The API will be available at `http://localhost:3000`.
 
 ---
 
@@ -90,7 +90,7 @@ The API will be available at `http://localhost:3000` (or your configured port).
 
 ## Notes
 - I retrieve seeding data from CodeForces API. The amount of contest history will
-depend on how long you let the seeding run. Stop the server and run it again with seeding functions coment out except for seedSyncConfig() & startSyncCron()
+depend on how long you let the seeding run. Stop the server and run it again with seeding functions commented out except for seedSyncConfig() & startSyncCron()
 - Be mindful of Codeforces API rate limits.
 - Email sending I used gmail credential
 - The project assumes MongoDB is running and accessible.
