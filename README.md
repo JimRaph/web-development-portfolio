@@ -5,7 +5,9 @@
 This project synchronizes Codeforces data for students, including their contest history, problem submissions, and statistics. It provides a backend API for managing students, fetching their Codeforces data, and sending inactivity reminder emails. The system supports scheduled automatic syncing via cron jobs and manual sync triggers.
 
 ---
-
+## Product Walkthrough
+- https://drive.google.com/drive/folders/1YddHCzgE0mIuCmNmmnuhsLjzbvjz18Q4?usp=sharing
+---
 ## Features
 
 - **Student Management:** Create, update, delete, and list students with Codeforces handles.
