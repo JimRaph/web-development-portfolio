@@ -52,7 +52,7 @@ function StudentProfileWrapper() {
 
 function App() {
   return (
-    <>
+    <div className='dark:bg-gray-800 min-h-screen'>
       <Router>
       <Navigation />
         <Routes>
@@ -62,7 +62,7 @@ function App() {
           <Route path="*" element={<div>Page Not Found</div>} />
         </Routes>
       </Router>
-    </>
+    </div>
   );
 }
 
