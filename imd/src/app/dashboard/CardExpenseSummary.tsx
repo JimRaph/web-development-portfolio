@@ -35,7 +35,7 @@ const CardExpenseSummary = () => {
 
     const formattedTotalExpenses = totalExpense.toFixed(2);
 
-    console.log("dat", data)
+    // console.log("dat", data)
   return (
     <div className="bg-white row-span-3 shadow-md rounded-2xl flex flex-col justify-between">
         {isLoading ? (

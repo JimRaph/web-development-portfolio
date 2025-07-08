@@ -23,7 +23,7 @@ const Expenses = () => {
 
     const {data, isLoading, isError} = useGetExpensesByCategoryQuery();
 
-    console.log(data)
+    // console.log(data)
 
     const expenses = useMemo(()=>data ?? [], [data]);
 

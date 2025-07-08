@@ -26,6 +26,6 @@ app.use("/dashboard", dashboardRouter);
 app.use("/products", productRouter);
 app.use("/expenses", expensesRouter);
 app.use("/users", userRouter);
-app.listen(port, () => {
-    console.log("listening to port ", port);
-});
+// app.listen(port, () => {
+//     console.log("listening to port ", port);
+// });
