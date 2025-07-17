@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: whatsapp-backend
+    env: node
+    rootDir: "WhatsApp Clone"
+    buildCommand: npm install
+    startCommand: npm start
