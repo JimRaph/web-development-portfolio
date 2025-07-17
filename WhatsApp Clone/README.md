@@ -1,6 +1,6 @@
 # 📱 WhatsApp Clone – Real-Time Social Messaging App
 
-A full-stack real-time chat application that mirrors the core experience and interface of **WhatsApp**. Built using **React**, **Node.js**, **Express**, and **Socket.io**, this project includes all major WhatsApp functionalities — with the exception of live status viewing (UI mock only).
+A full-stack real-time chat application that mirrors the core experience and interface of **WhatsApp**. Built using **React**, **Node.js**, **Express**, **Socket.io**, and **WebRTC**. This project includes all major WhatsApp functionalities, with the exception of live status viewing (UI mock only).
 
 ---
 
