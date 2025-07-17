@@ -51,18 +51,6 @@ A `todo.md` file is included with potential enhancements such as:
 
 ---
 
-## 📸 Screenshots
-
-> *(Add screenshots or GIFs of your app here to showcase the UI and core features.)*
-
----
-
-## 🚀 Getting Started
-
-> *(Optional — let me know if you'd like a section for running the app locally with `.env` setup, build instructions, etc.)*
-
----
-
 ## 📌 Disclaimer
 
 This project is intended for educational and portfolio purposes only. It is not affiliated with or endorsed by WhatsApp or Meta.
