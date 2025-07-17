@@ -25,7 +25,8 @@ A full-stack real-time chat application that mirrors the core experience and int
 ### 🖥️ Frontend
 - React
 - Context API
-- CSS Modules or Styled Components
+- TailwindCSS
+- Lucide Icons
 - Axios
 
 ### 🌐 Backend
@@ -37,6 +38,7 @@ A full-stack real-time chat application that mirrors the core experience and int
 ### ☁️ Cloud & Media
 - Cloudinary (media storage)
 - Multer (file upload middleware)
+- webRTC (voice and video calls)
 
 ---
 
