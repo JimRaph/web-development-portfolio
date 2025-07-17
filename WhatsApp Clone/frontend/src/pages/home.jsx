@@ -7,7 +7,7 @@ import { context } from "../context/context";
 import NewContactModal from "../component/NewContactModal";
 import Mainbar from "../component/Mainbar";
 import ChatScreen from "../component/chatScreen";
-import { useTheme } from "../context/themeContext";
+import { useTheme } from "../context/ThemeContext";
 
 
 const Home = () => {
