@@ -1,7 +1,7 @@
 import { 
   // storage, upload,
   cloudinary } from "../utils/media.js";
-import { Message } from "../models/MessageModel.js";
+import { Message } from "../models/messageModel.js";
 import { Chat } from "../models/chatModel.js";
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path'
