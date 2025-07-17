@@ -41,7 +41,13 @@ A full-stack real-time chat application that mirrors the core experience and int
 - webRTC (voice and video calls)
 
 ---
-
+## TEST
+Just like with WhatsApp, you can only interact with contacts/numbers already registered on WhatsApp.
+Add any of the numbers below as contact and start messaging/calling.
+- 101010
+- 43534625
+Also you can register new numbers if you prefer and try out the features.
+---
 ## 📄 TODO
 
 A `todo.md` file is included with potential enhancements such as:
