@@ -1,6 +1,6 @@
 # 📱 WhatsApp Clone – Real-Time Social Messaging App
 
-A full-stack real-time chat application that mirrors the core experience and interface of **WhatsApp**. Built using **React**, **Node.js**, **Express**, and **Socket.io**, this project includes all major WhatsApp functionalities — with the exception of live status viewing (UI mock only).
+A full-stack real-time chat application that mirrors the core experience and interface of **WhatsApp**. Built using **React**, **Node.js**, **Express**, **Socket.io**, and **WebRTC**. This project includes all major WhatsApp functionalities, with the exception of live status viewing (UI mock only).
 
 ---
 
@@ -25,7 +25,8 @@ A full-stack real-time chat application that mirrors the core experience and int
 ### 🖥️ Frontend
 - React
 - Context API
-- CSS Modules or Styled Components
+- TailwindCSS
+- Lucide Icons
 - Axios
 
 ### 🌐 Backend
@@ -37,6 +38,7 @@ A full-stack real-time chat application that mirrors the core experience and int
 ### ☁️ Cloud & Media
 - Cloudinary (media storage)
 - Multer (file upload middleware)
+- webRTC (voice and video calls)
 
 ---
 
@@ -48,18 +50,6 @@ A `todo.md` file is included with potential enhancements such as:
 - Profile and settings panel
 - Message replies / quoting
 - Call history management
-
----
-
-## 📸 Screenshots
-
-> *(Add screenshots or GIFs of your app here to showcase the UI and core features.)*
-
----
-
-## 🚀 Getting Started
-
-> *(Optional — let me know if you'd like a section for running the app locally with `.env` setup, build instructions, etc.)*
 
 ---
 
