@@ -18,12 +18,13 @@ import { socketHandlers } from "./utils/socketHandlers.js";
 import { tokenVerifier } from "./utils/token.js";
 
 dotenv.config();
+console.log("CLIENT_URL env variable:", process.env.CLIENT_URL);
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: process.env.CLIENT_URL, 
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   },
@@ -34,9 +35,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(helmet());
 app.use(
-  cors({
-    allowedHeaders: ["Authorization", "Content-Type"],
+ cors({
+    origin: [process.env.CLIENT_URL],
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Authorization", "Content-Type"],
   })
 );
 app.use(xss());
