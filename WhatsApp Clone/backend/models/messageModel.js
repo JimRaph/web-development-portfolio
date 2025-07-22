@@ -57,8 +57,8 @@ const messageSchema = new mongoose.Schema({
     readAt: {
     type: Date
     },
-    clientMessageId: String, // For deduplication
-    isOptimistic: Boolean // To identify client-generated messages
+    clientMessageId: String, 
+    isOptimistic: Boolean 
 }, {timestamps: true});
 
 export const Message = mongoose.model('Message', messageSchema);

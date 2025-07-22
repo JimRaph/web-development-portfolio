@@ -11,6 +11,7 @@ import axios from "axios";
 import { useSocket } from "../context/Socket";
 import { useWebRTC } from '../hooks/useWebRTC';
 import { base_url } from "../../utils/baseUrl";
+import { toast } from "sonner";
 
 
 const ChatScreen = ({ recipient}) => {
@@ -33,7 +34,7 @@ const ChatScreen = ({ recipient}) => {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  const pageRef = useRef(0);
+  // const pageRef = useRef(0);
   const scrollableRef = useRef(null);
   const inputFileMedia = useRef(null);
   const inputFileDoc = useRef(null);
@@ -59,11 +60,6 @@ const ChatScreen = ({ recipient}) => {
   const userId = user?._id;
   const chatId = selectedChat?._id;
 
-  useEffect(() => {
-    if (!socket || !chatId) return;
-    socket.emit("join_chat", chatId);
-  }, [socket, chatId]);
-  
   // --------------------------------------------
   // HANDLE LOADING MESSAGE HISTORY 
   // ----------------------------------------------
@@ -72,25 +68,31 @@ const ChatScreen = ({ recipient}) => {
     setLoadingHistory(true);
     try {
       const res = await axios.get(
-        `${base_url}/message/${chatId}?page=${pageRef.current}&limit=20`,
+        `${base_url}/message/${chatId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      const fetched = res.data.messages;
-      // console.log('fetched: ', fetched)
-      setMessages(prev => {
-      const combined = [...fetched, ...prev];
-      const uniqueMessages = Array.from(new Map(combined.map(m => [m._id, m])).values());
-      return uniqueMessages;
-    });
 
-      if (fetched.length < 20) {
+      if(res.data.success){
+        const fetched = res.data.messages || [];
+        // console.log('fetched: ', fetched)
+        setMessages(prev => {
+        const combined = [...fetched, ...prev];
+        const uniqueMessages = Array.from(new Map(combined.map(m => [m._id, m])).values());
+        return uniqueMessages;
+      });
+
+      if (fetched?.length < 20) {
         hasMoreRef.current = false;
         setHasMore(false);
       }
-      
-      pageRef.current++;
+
+      } else{
+        toast.error(res?.data?.message || 'Something went wrong')
+      }
+      // pageRef.current++;
     } catch (err) {
       console.error("Error loading history:", err);
+      toast.error(err?.response?.data?.message || 'Something went wrong, try again');
     } finally {
       setLoadingHistory(false);
     }
@@ -100,7 +102,7 @@ const ChatScreen = ({ recipient}) => {
   useEffect(() => {
     if (!chatId) return;
     // socket?.emit("join_chat", chatId);
-    pageRef.current = 0;
+    // pageRef.current = 0;
     setHasMore(true);
     hasMoreRef.current = true;
     setMessages([]);
@@ -198,51 +200,7 @@ const ChatScreen = ({ recipient}) => {
 
     if(!socket) return
 
-  const handleNewMessage = (msg) => {
-    // console.log('New message received:', msg);
-    msg = msg.message
-    // console.log('MOD: ', msg)
-    // Update messages if it belongs to current chat
-    if (msg.chat._id === chatId) {
-      // console.log('ADDED')
-      setMessages(prev => [...prev, msg]);
-    }
-
-    // Update chats state with unread count (safe even if chats is empty)
-    setChats(prev => {
-      const existingChatIndex = prev.findIndex(c => c._id === msg.chat._id);
-      
-      if (existingChatIndex >= 0) {
-        return prev.map(chat => {
-          if (chat._id === msg.chat._id) {
-            const updatedCounts = chat.unreadCounts?.map(uc => {
-              if (uc.user.toString() === userId.toString() && msg.sender?._id !== userId) {
-                return { ...uc, count: uc.count + 1 };
-              }
-              return uc;
-            }) || [];
-            // console.log('msg: ', msg)
-            return {
-              ...chat,
-              latestMessage: msg,
-              unreadCounts: updatedCounts
-            };
-          }
-          return chat;
-        });
-      }
-      return prev; // Don't modify if chat not found
-    });
-
-    // Mark as delivered if message isn't ours
-    if (msg.sender?._id == userId) {
-      // console.log('EMIT MARK DELIVERED')
-      socket.emit('mark_delivered', {
-        messageId: msg._id,
-        chatId: msg.chat._id
-      });
-    }
-  };
+    // console.log('Attaching new chat socket')
 
   const handleChatUpdated = (updatedChat) => {
     // console.log('Chat updated:', updatedChat._id);
@@ -254,7 +212,7 @@ const ChatScreen = ({ recipient}) => {
           c._id === updatedChat._id ? updatedChat : c
         );
       }
-      return [...prev, updatedChat]; // Add new chat if not found
+      return [...prev, updatedChat]; 
     });
     
     if (selectedChat?._id === updatedChat._id) {
@@ -270,35 +228,17 @@ const ChatScreen = ({ recipient}) => {
     // console.log('MESSAGE DELIVERED')
   };
 
-  const handleNewChat = (chat) => {
-      // Prevent duplicate chats
-      setChats(prev => {
-        const exists = prev.some(c => c._id === chat._id);
-        return exists ? prev : [...prev, chat];
-      });
-      
-      // If this is our current selected contact's chat, select it
-      if (selectedContact && 
-          (chat.participants.some(p => p._id === (selectedContact._id || selectedContact.contact?._id)))) {
-        setSelectedChat(chat);
-        setSelectedContact(null);
-      }
-    };
 
     scrollToBottom();
   // Set up all listeners
-  socket.on("new_message", handleNewMessage);
   socket.on("chat_updated", handleChatUpdated);
   socket.on("message_delivered", handleMessageDelivered);
-  socket.on("new_chat", handleNewChat);
 
   return () => {
-    socket.off("new_message", handleNewMessage);
     socket.off("chat_updated", handleChatUpdated);
     socket.off("message_delivered", handleMessageDelivered);
-    socket.off("new_chat", handleNewChat);
   };
-  }, [chatId, selectedChat?._id]);
+  }, [selectedChat?._id, socket, messages]);
  
 
   // Add this useEffect to handle message status updates
@@ -308,6 +248,7 @@ const ChatScreen = ({ recipient}) => {
     const handleMessageStatus = ({ messageId, status, deliveredTo, readBy }) => {
       setMessages(prev => prev.map(m => {
         if (m._id === messageId) {
+          // console.log('message status')
           return { 
             ...m, 
             status: status || m.status,
@@ -321,9 +262,28 @@ const ChatScreen = ({ recipient}) => {
 
     socket.on('message_status', handleMessageStatus);
     return () => socket.off('message_status', handleMessageStatus);
-  }, []);
+  }, [messages]);
 
+  //user room on socket connection
+// useEffect(() => {
+//   if (!socket || !user?._id) return;
+//   // Join personal room
+//   socket.emit("join_user", user._id);
+// }, [socket, user?._id]);
 
+useEffect(() => {
+  if (!socket || !selectedChat) return;
+  
+  // Join chat room
+  socket.emit("join_chat", selectedChat._id);
+  
+  // Also join all participants' rooms
+  selectedChat.participants.forEach(p => {
+    if (p._id !== user._id) {
+      socket.emit("join_user", p._id);
+    }
+  });
+}, [socket, selectedChat]);
   // ---------------------------------------------
   // Auto-scroll to bottom
   // -------------------------------------------------
@@ -361,7 +321,7 @@ const ChatScreen = ({ recipient}) => {
       // console.log('RECIPIENT: ', recipient)
       recipientId = recipient.firstname ? recipient.contact._id : recipient._id
     }
-    // const msgChat = chatId ? chatId : null
+
     // console.log(recipient)
     // console.log('GROU: ', recipientId) 
     const formData = new FormData();
@@ -378,32 +338,46 @@ const ChatScreen = ({ recipient}) => {
       });
 
       
-    if (data.message) {
+    if (data.success) {
       const populatedMessage = {
         ...data.message,
-        sender: user, // Add sender info
-        chat: data.chat || selectedChat // Add chat info
+        sender: user, 
+        chat: data.chat || selectedChat 
       };
 
-      setMessages(prev => [...prev, populatedMessage]);
+      setNewMessage(""); 
+    setFiles([]);      
+    setSelectedFile(null);
+    setShowFiles(false);
+  
       
       scrollToBottom();
 
-
-      // For new chats
       if (data.chat) {
-        setChats(prev => [...prev, data.chat]);
+        // console.log('there is data')
+        setChats(prev => prev.some(c => c._id === data.chat._id) ? prev : [...prev, data.chat]);
         setSelectedChat(data.chat);
-        socket.emit('join_chat', data.chat._id);
         setSelectedContact(null);
       }
-    }
-
-      
+    } else{
+      toast.error(data?.message || 'Error sending message')
+    }    
     } catch (err) {
       console.error("Send message error:", err);
+      toast.error(err?.response?.data?.message || 'Something went wrong, try again');
     }
   };
+
+
+  // join chat
+  useEffect(() => {
+    if (!socket || !selectedChat) return;
+        socket.emit('join_chat', selectedChat._id);
+    
+    return () => {
+      socket.emit('leave_chat', selectedChat._id);
+    };
+  }, [socket, selectedChat]);
 
 
 useEffect(() => {
@@ -478,27 +452,28 @@ useEffect(() => {
     observerRef.current = observer;
 
     return () => observer.disconnect();
-  }, [selectedChat, socket]);
+  }, [selectedChat, socket, messages]);
 
-  useEffect(() => {
-    if(!socket) return 
-    const handleMessageRead = ({ messageId, readBy }) => {
-      // console.log('[READ RECEIPT] Updating message:', messageId);
-      setMessages(prev => prev.map(m => {
-        if (m._id === messageId) {
-          // console.log('Before:', m.readBy, 'After:', readBy);
-          return { ...m, readBy };
-        }
-        return m;
-      }));
-    };
+  // redundant message_read handler
+  // useEffect(() => {
+  //   if(!socket) return 
+  //   const handleMessageRead = ({ messageId, readBy }) => {
+  //     // console.log('[READ RECEIPT] Updating message:', messageId);
+  //     setMessages(prev => prev.map(m => {
+  //       if (m._id === messageId) {
+  //         // console.log('Before:', m.readBy, 'After:', readBy);
+  //         return { ...m, readBy };
+  //       }
+  //       return m;
+  //     }));
+  //   };
 
-    socket.on("message_read", handleMessageRead);
+  //   socket.on("message_read", handleMessageRead);
 
-    return () => {
-      socket.off("message_read", handleMessageRead);
-    };
-  }, []);
+  //   return () => {
+  //     socket.off("message_read", handleMessageRead);
+  //   };
+  // }, []);
 
 
   useEffect(() => {
@@ -512,12 +487,12 @@ useEffect(() => {
 
   socket.on('message_starred', handleMessageStarred);
   // console.log('Socket connection status:', socket.connected);
-  socket.on('connect', () => console.log('Socket connected!'));
-  socket.on('disconnect', () => console.log('Socket disconnected'));
+  // socket.on('connect', () => console.log('Socket connected!'));
+  // socket.on('disconnect', () => console.log('Socket disconnected'));
   
   return () => {
-    socket.off('connect');
-    socket.off('disconnect');
+    // socket.off('connect');
+    // socket.off('disconnect');
     socket.off('message_starred', handleMessageStarred);
     };
   }, [socket]);
@@ -552,7 +527,7 @@ useEffect(() => {
         chatId: selectedChat._id 
       });
     }
-  }, [selectedChat]);
+  }, []);
 
   // chat read update
   useEffect(() => {
@@ -592,15 +567,31 @@ useEffect(() => {
     }, {
         headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
-      // console.log('RES.DATA ', res.data)
-      initiateCall(res.data);
-    });
+    if (res.data.success) {
+      initiateCall(res.data); 
+    } else {
+      toast.error(res.data.message || 'Call could not be started'); 
+    }
+  })
+  .catch(error => {
+    toast.error(error?.response?.data?.message || 'Something went wrong, try again');
+  });
 };
 
 // Edit and delete
 const handleDelete = async (msgId) => {
-  await axios.delete(`${base_url}/message/delete/${msgId}`, { headers: { Authorization: `Bearer ${token}` } });
-  setMessages(prev => prev.filter(m => m._id !== msgId));
+  try {
+    const {data} = await axios.delete(`${base_url}/message/delete/${msgId}`, 
+      { headers: { Authorization: `Bearer ${token}` } });
+    if(data.success){
+
+      setMessages(prev => prev.filter(m => m._id !== msgId));
+    } else{
+      toast.error(data?.message || 'Something went wrong')
+    }
+  } catch (error) {
+    toast.error(error?.response?.data?.message || 'Something went wrong, try again');
+  }
 };
 
 const handleStarred = async(msg) => {
@@ -610,21 +601,25 @@ const handleStarred = async(msg) => {
       null,
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    
+    if(response.data.success){
     // Update the message in local state
-    setMessages(prev => prev.map(m => 
-      m._id === msg._id ? { ...m, starredBy: response.data.starredBy } : m
-    ));
-    
-    // Emit socket event for real-time updates
-    socket.emit('message_starred', {
-      messageId: msg._id,
-      starredBy: response.data.starredBy,
-      chatId: msg.chat._id
-    });
+      setMessages(prev => prev.map(m => 
+        m._id === msg._id ? { ...m, starredBy: response.data.starredBy } : m
+      ));
+
+      // Emit socket event for real-time updates
+      socket.emit('message_starred', {
+        messageId: msg._id,
+        starredBy: response.data.starredBy,
+        chatId: msg.chat._id
+      });
+    } else{
+      toast.error(response?.data?.message || 'Error deleting message')
+    }
     
   } catch (error) {
-    console.error("Error starring message:", error);
+    // console.error("Error starring message:", error);
+    toast.error(error?.response?.data?.message || 'Something went wrong, try again');
   }
 }
 
@@ -644,13 +639,13 @@ useEffect(() => {
   }
 }, [localStream]);
 
-useEffect(() => {
-  if (remoteStream) {
-    console.log('Remote stream updated:', 
-      remoteStream.getTracks().map(t => `${t.kind}:${t.enabled}`)
-    );
-  }
-}, [remoteStream]);
+// useEffect(() => {
+//   if (remoteStream) {
+//     console.log('Remote stream updated:', 
+//       remoteStream.getTracks().map(t => `${t.kind}:${t.enabled}`)
+//     );
+//   }
+// }, [remoteStream]);
 
 useEffect(() => {
     if (isRemoteMuted !== undefined) {
@@ -668,7 +663,7 @@ const renderMessage = (msg) => {
 
   const mine = msg?.sender?._id === userId;
   // const isDelivered = msg?.deliveredTo?.includes(recipient._id);
-  const isRead = msg?.readBy?.includes(recipient._id);
+  const isRead = msg?.readBy?.includes(recipient?._id);
   const isGroupChat = selectedChat?.type === "group";
   const seenCount = msg?.readBy?.length || 0;
   const deliveredCount = msg?.deliveredTo?.length || 0;
@@ -711,116 +706,6 @@ const renderMessage = (msg) => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i]);
   };
-
-  // Render different media types
-  // const renderMediaItem = (media) => {
-  //   const fileExtension = media.filename?.split('.').pop()?.toLowerCase();
-  //   // console.log('fileex: ', fileExtension)
-  //   const isDocument = media.type?.split('/')[0] === 'application' || 
-  //   ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx','csv'].includes(fileExtension);
-
-  //   switch (true) {
-  //     case media.format === 'image' || media.type?.startsWith('image/'):
-  //       return (
-  //         <div className="relative group">
-  //           <img
-  //             src={media.url}
-  //             alt={media.filename}
-  //             className="w-full max-w-[300px] rounded-lg object-contain max-h-[400px]"
-  //             loading="lazy"
-  //           />
-  //           {/* <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-  //             {media.filename}
-  //           </div> */}
-  //         </div>
-  //       );
-
-  //     case media.format === 'video' || media.type?.startsWith('video/'):
-  //       return (
-  //         <div className="relative">
-  //           <video
-  //             controls
-  //             className="w-full max-w-[300px] rounded-lg max-h-[400px]"
-  //           >
-  //             <source src={media.url} type={`video/${fileExtension}`} />
-  //             Your browser does not support the video tag.
-  //           </video>
-  //           <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-  //             {/* {media.filename} */}
-  //             {formatFileSize(media.size)}
-  //           </div>
-  //         </div>
-  //       );
-
-  //     case media.format === 'audio' || media.type?.startsWith('audio/'):
-  //       return (
-  //         <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg max-w-[300px]">
-  //           <div className="flex items-center gap-3">
-  //             <div className="bg-blue-500 p-2 rounded-full">
-  //               <Mic size={16} className="text-white" />
-  //             </div>
-  //             <audio
-  //               src={media.url}
-  //               controls
-  //               className="flex-1"
-  //             />
-  //           </div>
-  //           <div className="mt-2 text-sm">
-  //             <p>{media.filename}</p>
-  //             <p className="text-gray-500 text-xs">
-  //               {formatFileSize(media.size)} • {fileExtension?.toUpperCase()}
-  //             </p>
-  //           </div>
-  //         </div>
-  //       );
-
-  //     case isDocument:
-  //       return (
-  //         <a
-  //           href={media.url}
-  //           download={media.filename}
-  //           type='csv'
-  //           // target="_blank"
-  //           rel="noopener noreferrer"
-  //           className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg max-w-[300px] hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-  //         >
-  //           <div className="bg-blue-500 p-2 rounded-full">
-  //             <File size={16} className="text-white" />
-  //           </div>
-  //           <div className="flex-1 min-w-0">
-  //             <p className="font-medium truncate">{media.filename}</p>
-  //             <p className="text-gray-500 text-xs">
-  //               {formatFileSize(media.size)} • {fileExtension?.toUpperCase()}
-  //             </p>
-  //           </div>
-  //           <Download size={16} className="text-gray-500" />
-  //         </a>
-  //       );
-
-  //     default:
-  //       return (
-  //         <a
-  //           href={media.url}
-  //           download={media.filename}
-  //           type={media.type}
-  //           // target="_blank"
-  //           rel="noopener noreferrer"
-  //           className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg max-w-[300px] hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-  //         >
-  //           <div className="bg-gray-500 p-2 rounded-full">
-  //             <File size={16} className="text-white" />
-  //           </div>
-  //           <div className="flex-1 min-w-0">
-  //             <p className="font-medium truncate">{media.filename}</p>
-  //             <p className="text-gray-500 text-xs">
-  //               {formatFileSize(media.size)} • {media.format || 'FILE'}
-  //             </p>
-  //           </div>
-  //           <Download size={16} className="text-gray-500" />
-  //         </a>
-  //       );
-  //   }
-  // };
 
   const renderMediaItem = (media) => {
     const fileExtension = media.filename?.split('.').pop()?.toLowerCase();
@@ -1016,7 +901,7 @@ const renderMessage = (msg) => {
           </div>
 
           {/* Hover Actions */}
-          {mine && (
+          {msg && (
             <div className="absolute top-0 right-0 mt-[-1.5rem] mr-[-0.5rem]">
               <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <div className={`${theme.main} ${theme.textPrimary} text-sm rounded shadow-lg flex`}>
@@ -1062,7 +947,7 @@ const renderMessage = (msg) => {
       {/* Header */}
       <div className="flex justify-between items-center p-1 px-3">
         <div className="flex gap-2 items-center">
-          <img src={identifier(selectedChat || selectedContact)[1] } width={40} height={40} 
+          <img src={identifier(selectedChat || selectedContact)[1] || null} width={40} height={40} 
           className={`${theme.border} border rounded-full`} />
           <h3 className={`font-bold text-sm px-2 py-2`}>
             {identifier(selectedChat || selectedContact)[0] }
@@ -1204,7 +1089,8 @@ const renderMessage = (msg) => {
         <div
           ref={scrollableRef}
           onScroll={handleScroll}
-          className={`relative z-2 h-full overflow-y-scroll custom-scrollbar ${theme.textPrimary}`}
+          className={`relative z-2 h-full overflow-y-scroll custom-scrollbar 
+            ${theme.textPrimary} flex flex-col-reverse `}
         >
           {loadingHistory && (
             <div className="text-center text-gray-500 py-2">Loading...</div>
@@ -1212,8 +1098,10 @@ const renderMessage = (msg) => {
 
           <div className="flex flex-col-reverse px-4 pt-2 pb-2">
             {messages.length > 0 || selectedChat ? (
-              <div className="flex flex-col-reverse px-4 pt-2 pb-24">
-                {messages.slice().reverse().map(renderMessage)}
+              <div className="flex flex-col-reverse  px-4 pt-2 pb-24">
+                {messages.slice().reverse().
+                sort((b, a) => new Date(a.createdAt) - new Date(b.createdAt)).
+                map(renderMessage)}
               </div>
               ) : (
               <div className="flex-1 flex items-center justify-center 

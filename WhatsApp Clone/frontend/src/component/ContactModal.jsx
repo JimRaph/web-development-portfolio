@@ -102,7 +102,7 @@ const ContactModal = ({setModalOpen, ref}) => {
         <p className={`${theme.textSecondary} mt-4`}>All contacts</p>
 
         {/* DISPLAYS ALL CONTACTS HERE */}
-        <Allcontacts />
+        <Allcontacts setModalOpen={setModalOpen} />
     </div>
   )
 }

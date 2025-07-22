@@ -11,6 +11,7 @@ import {  Eye, Pin, Star,
 import { context } from '../../context/context';
 import axios from 'axios';
 import { base_url } from '../../../utils/baseUrl';
+import {toast} from 'sonner'
 
 const Contextmenu = ({ modalPosition, setShowModal, selectedContextChat }) => {
   
@@ -77,10 +78,12 @@ const Contextmenu = ({ modalPosition, setShowModal, selectedContextChat }) => {
               // console.log(data.message)
               // console.log('read: ', data.chat)
             }else{
-              console.log(data.error)
+              // console.log(data.error)
+              toast.error(data?.message || 'Something went wrong')
             }
       } catch (error) {
-        console.log('error marking chat as read: ', error)
+        // console.log('error marking chat as read: ', error)
+        toast.error(error?.response?.data?.message || 'Something went wrong, try again');
       }
     }
 
@@ -102,9 +105,12 @@ const Contextmenu = ({ modalPosition, setShowModal, selectedContextChat }) => {
           // console.log("Chat pinned to top")
           const updatedChat = data.chat;
           updateLocalChat(updatedChat._id, updatedChat);
+        }else{
+          toast.error(data?.message || 'Something went wrong')
         }
       } catch (error) {
-          console.log("chat not pinned to top: ", error)
+          // console.log("chat not pinned to top: ", error)
+          toast.error(error?.response?.data?.message || 'Something went wrong, try again');
       }
   };
 
@@ -125,9 +131,12 @@ const Contextmenu = ({ modalPosition, setShowModal, selectedContextChat }) => {
           // console.log("Chat added to favourite", data)
           const updatedChat = data.chat;
           updateLocalChat(updatedChat._id, updatedChat);  
+        }else{
+          toast.error(data?.message || 'Something went wrong')
         }
       } catch (error) {
-          console.log("chat not added to favourite: ", error)
+          // console.log("chat not added to favourite: ", error)
+          toast.error(error?.response?.data?.message || 'Something went wrong, try again');
       }
   };
 
@@ -151,9 +160,12 @@ const Contextmenu = ({ modalPosition, setShowModal, selectedContextChat }) => {
         const updatedChat = data.chat;
         updateLocalChat(updatedChat._id, updatedChat);
         // setSelectedChat(updatedChat);
+      }else{
+        toast.error(data?.message || 'Something went wrong')
       }
     } catch (error) {
-      console.error("Error toggling mute status:", error);
+      // console.error("Error toggling mute status:", error);
+      toast.error(error?.response?.data?.message || 'Something went wrong, try again');
     }
   };
 
@@ -176,9 +188,12 @@ const Contextmenu = ({ modalPosition, setShowModal, selectedContextChat }) => {
           updateLocalChat(updatedChat._id, updatedChat);            
           // console.log("Chat added to archive")
           // console.log('chat: ', data.chat)
+        }else{
+          toast.error(data?.message || 'Something went wrong')
         }
       } catch (error) {
-          console.log("chat not added to archive: ", error)
+          // console.log("chat not added to archive: ", error)
+          toast.error(error?.response?.data?.message || 'Something went wrong, try again');
       }
 
   };
@@ -201,14 +216,18 @@ const Contextmenu = ({ modalPosition, setShowModal, selectedContextChat }) => {
             setMessages([])
           // console.log("Messages deleted")
           // console.log('Cleared: ', data.chat)
+        }else{
+          toast.error(data?.message)
         }
       } catch (error) {
-          console.log("messages not deleted: ", error)
+          // console.log("messages not deleted: ", error)
+          toast.error(error?.response?.data?.message || 'Something went wrong, try again');
       }
 
   };
 
   const handleDelete = async () => {
+    setShowModal(false);
     const result = await deleteChat(selectedContextChat._id);
     if (!result.success) {
       alert(`Deletion failed: ${result.error}`);
@@ -295,6 +314,7 @@ const Contextmenu = ({ modalPosition, setShowModal, selectedContextChat }) => {
 
                 <li 
                     onClick={clearMessages}
+                    
                     className={`flex items-center space-x-2 p-2 hover:bg-[#30393f] cursor-pointer ${isLoading ? 'opacity-50' : ''}`}
                 >
                     <MessageSquare size={16} /> <span>Clear messages</span>

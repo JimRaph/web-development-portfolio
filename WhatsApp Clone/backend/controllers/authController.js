@@ -16,7 +16,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "Phone number must contain only digits" });
     }
 
-    // Ensure Phone number is unique
+    // ensures phone number is unique
     const existingUser = await User.findOne({ Phone });
     if (existingUser) {
       return res.status(400).json({ message: "Phone number already registered" });
@@ -29,7 +29,7 @@ export const register = async (req, res) => {
       return res.status(500).json({ message: 'Error sending verification code'});
     }
 
-    // Create User
+    // creates user
     const user = await User.create({
       Phone,
       verificationCode: response.otp,
@@ -65,20 +65,20 @@ export const verifyPhone = async (req, res) => {
       return res.status(400).json({ message: "otp must only be digits" });
     }
 
-    // Find user by ID
+    // finds user by id
     const user = await User.findOne({Phone: phone});
     if (!user) {
       console.log( "USER DOES NOT EXIST" )
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if user has a verification request ID
+    // checks if user has a verification request ID
     if (!user.verificationCode) {
       console.log( "NO PENDING VERIFICATION" )
       return res.status(400).json({ message: "No pending verification request" });
     }
 
-    // Verify OTP with Vonage
+    // verify OTP with Vonage
     const response = await verifyCode(user.verificationCode, otp);
     console.log(user.verificationCode, otp)
     console.log(response)
@@ -87,12 +87,12 @@ export const verifyPhone = async (req, res) => {
       return res.status(401).json({ message: "incorrect otp" });
     }
 
-    // Update user status
+    // updates user status
     user.isVerified = true;
     // user.verificationCode = null;
     await user.save();
 
-    // Generate JWT Token
+    // generates JWT token
     const token = tokenGenerator(user._id);
 
     return res.status(200).json({

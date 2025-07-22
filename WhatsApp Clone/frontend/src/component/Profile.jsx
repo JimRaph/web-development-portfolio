@@ -104,10 +104,13 @@ const handleFileChange = async(e) => {
             const {data} = await updateProfile({avatar})
             if(data.success){
                 setPfp(data.user.avatar)
+            }else{
+              toast.error(data?.message || 'Something went wrong')
             }
         }
     } catch (error) {
-        console.log(error)
+        // console.log(error)
+        toast.error(error?.response?.data?.message || 'Something went wrong, try again');
     }
 }
 

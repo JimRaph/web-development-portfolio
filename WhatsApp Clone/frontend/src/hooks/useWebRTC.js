@@ -200,7 +200,7 @@ export const useWebRTC = (socket, currentUserId) => {
     };
 
     const cleanup = () => {
-        console.log('Cleaning up WebRTC resources');
+        // console.log('Cleaning up WebRTC resources');
         setIsMuted(false);
         setIsRemoteMuted(false);
         if (peerConnection.current) {

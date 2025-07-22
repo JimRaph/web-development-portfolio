@@ -133,7 +133,7 @@ export const deleteContact = async (req, res) => {
   }
 };
 
-  export const getContacts = async (req, res) => {
+export const getContacts = async (req, res) => {
   try {
     if (!req.user || !req.user.id) {
       return res.status(401).json({ message: "Unauthorized access" });
@@ -177,7 +177,7 @@ export const getProfile = async (req, res) => {
               .select('-verificationCode -password')
               .populate('contacts.contact', '-contacts -verificationCode -createdAt -updatedAt');
 
-
+  console.log('SENT: ', user)
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -233,28 +233,3 @@ export const updateProfile = async (req, res) => {
       .json({ message: "Error updating profile", error: error.message });
   }
 }
-
-// export const getUser = async (req, res) => {
-//   try {
-//       const { contactId } = req.body; // Get contactId from request body
-//       console.log("contactId: ",contactId)
-//       // Validate if contactId is a valid ObjectId
-//       if (!contactId) {
-//           console.log('getUser in usercontroller needs a phone number')
-//           return res.status(400).json({ success: false, message: "Invalid User ID format" });
-//       }
-
-//       // Query database
-//       const user = await User.findById(contactId);
-
-//       if (!user) {
-//           console.log('User does not exist')
-//           return res.status(404).json({ success: false, message: "User not found" });
-//       }
-
-//       res.json({ success: true, info: user });
-//   } catch (error) {
-//       console.error("Error getting user usercontroller getuser:", error);
-//       res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };

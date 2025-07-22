@@ -15,7 +15,7 @@ const Contacts = ({setActiveIcon}) =>{
     const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   
     const handleRightClick = (e) => {
-      e.preventDefault(); // Prevent the default browser menu
+      e.preventDefault();
   
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
@@ -52,7 +52,7 @@ const Contacts = ({setActiveIcon}) =>{
         contactObj.contact.toString() === otherParticipant._id.toString()
       );
 
-      return isSaved; // Keep chat only if other participant is saved in my contacts
+      return isSaved;
     });
 
   

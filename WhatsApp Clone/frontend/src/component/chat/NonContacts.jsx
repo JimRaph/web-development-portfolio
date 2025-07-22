@@ -14,7 +14,7 @@ const NonContacts = ({setActiveIcon}) =>{
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
 
   const handleRightClick = (e) => {
-    e.preventDefault(); // Prevent the default browser menu
+    e.preventDefault(); 
 
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;

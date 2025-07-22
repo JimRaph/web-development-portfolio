@@ -50,8 +50,6 @@ const Home = () => {
 
 
   return (
-   
-    
       <div className={`h-svh relative cursor-default w-screen ${theme.main}  overflow-hidden ${theme.textPrimary} flex flex-col`}>
         <Header />
 

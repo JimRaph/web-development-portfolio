@@ -1,8 +1,7 @@
 import { Chat } from "../models/chatModel.js";
 import { User } from "../models/userModel.js";
-import mongoose from "mongoose";
+import mongoose, { trusted } from "mongoose";
 import {v2 as cloudinary} from 'cloudinary'
-// import { Message } from "../models/MessageModel.js";
 
 
 
@@ -61,21 +60,22 @@ export const getGroupChats = async (req, res) => {
 
     if (groupChats.length === 0) {
       return res.status(200).json({ 
-        message: "No group chats found for this user" }),
+        message: "No group chats found" }),
         groupChats
     }
 
     console.log('no. of group chats: ', groupChats.length)
+    
     return res.status(200).json({
-      message: "Group chats found for this user",
+      message: "Group chats found",
       groupChats,
       success: true
     });
 
   } catch (err) {
-    console.error("Error retrieving group chats:", err);
+    console.error("Error getting group chats:", err);
     return res.status(500).json({
-      message: "Error retrieving group chats",
+      message: "Error getting group chats",
       error: err.message
     });
   }
@@ -115,7 +115,7 @@ export const createChat = async (req, res) => {
     if (!participantId) {
       return res
        .status(404)
-       .json({ message: "User not found can't create chat, invite user to WhatsApp" });
+       .json({ message: "User not found, invite to WhatsApp" });
     }
     // Check if chat already exists
     const existingChat = await Chat.findOne({
@@ -148,7 +148,7 @@ export const createChat = async (req, res) => {
                     .populate('latestMessage');
 
     // console.log({ message: "Chat created", chat: JSON.stringify(sendChat) })
-    res.status(201).json({ message: "Chat created", chat: sendChat });
+    res.status(201).json({ message: "Chat created", chat: sendChat, success: trusted });
   } catch (error) {
     console.error("Error creating chat:", error);
     return res
@@ -225,6 +225,7 @@ export const createGroupChat = async (req, res) => {
     return res.status(201).json({
       message: "Group chat created successfully",
       chat,
+      success: true
     });
 
   } catch (error) {
@@ -575,35 +576,38 @@ export const archiveChat = async (req, res) => {
 export const clearChatMessages = async (req, res) => {
   try {
     const { chatId } = req.params;
-    
-    // Verify chat exists and user is a participant
+    const userId = req.user.id;
+
     const chat = await Chat.findOne({
       _id: chatId,
-      participants: req.user.id
+      participants: userId
     }).populate('participants latestMessage');
-    
+
     if (!chat) {
       return res.status(404).json({ message: "Chat not found or user not authorized" });
     }
-    
-    // Clear messages
-    // DELETE FOR EVERYONE
-    // await Message.deleteMany({ chat: chatId });
-    const alreadyCleared = chat.clear.some(entry => entry.user.toString() === req.user.id);
-    if (!alreadyCleared) {
-      chat.clear.push({ user: req.user.id, clearedAt: new Date()});
+
+    //  update clear timestamp
+    const clearEntry = chat.clear.find(entry => entry.user.toString() === userId);
+    if (clearEntry) {
+      clearEntry.clearedAt = new Date();
+    } else {
+      chat.clear.push({ user: userId, clearedAt: new Date() });
     }
-   
-    
-    // Update the chat's latestMessage reference
-    // chat.latestMessage = null;
+
+    // resets unread count 
+    chat.unreadCounts = chat.unreadCounts.map(uc => 
+      uc.user.toString() === userId ? { ...uc, count: 0 } : uc
+    );
+
     await chat.save();
-    
+
     return res.status(200).json({ 
       message: "Chat messages cleared", 
       success: true,
       chat 
     });
+
   } catch (error) {
     console.error("Error clearing chat messages:", error);
     return res.status(500).json({ 
@@ -614,13 +618,13 @@ export const clearChatMessages = async (req, res) => {
 };
 
 
+
 // Delete a chat
 export const deleteChat = async (req, res) => {
   try {
     const { chatId } = req.params;
     const userId = req.user._id;
 
-    // Find and verify chat
     const chat = await Chat.findOne({
       _id: chatId,
       participants: userId
@@ -634,12 +638,24 @@ export const deleteChat = async (req, res) => {
     }
 
     // Soft-delete logic
-    if (!chat.softDeletedBy.includes(userId)) {
-      chat.softDeletedBy.push(userId);
+    if (!chat.softDeletedBy.includes(userId.toString())) {
+      chat.softDeletedBy.push(userId.toString());
     }
 
+    // Update or insert clear timestamp
+    const clearEntry = chat.clear.find(entry => entry.user.toString() === userId.toString());
+    if (clearEntry) {
+      clearEntry.clearedAt = new Date();
+    } else {
+      chat.clear.push({ user: userId, clearedAt: new Date() });
+    }
 
-    // If no participants left, delete chat entirely
+    // Reset unread count for user
+    chat.unreadCounts = chat.unreadCounts.map(uc =>
+      uc.user.toString() === userId.toString() ? { ...uc, count: 0 } : uc
+    );
+
+    // Delete chat if all participants have deleted
     if (chat.participants.length === chat.softDeletedBy.length) {
       await chat.deleteOne();
       return res.status(200).json({
@@ -648,31 +664,18 @@ export const deleteChat = async (req, res) => {
       });
     }
 
-    // Add or update user's clear timestamp
-    const alreadyCleared = chat.clear.find(
-      entry => entry.user.toString() === userId.toString()
-    );
-    
-    if (!alreadyCleared) {
-      chat.clear.push({ user: userId, clearedAt: new Date() });
-    } else {
-      alreadyCleared.clearedAt = new Date();
-    }
-
     await chat.save();
 
-    // Notify others
+    // Notify others in the room
     req.io.to(chatId).emit('participant_left', {
       chatId,
       userId,
       remainingParticipants: chat.participants
     });
 
-    console.log('DELETED CHAT: ', chat);
-
     return res.status(200).json({
       success: true,
-      message: "Chat hidden (soft-deleted) for user",
+      message: "Chat deleted",
       chat
     });
 
@@ -680,10 +683,11 @@ export const deleteChat = async (req, res) => {
     console.error("Delete error:", error);
     return res.status(500).json({
       success: false,
-      message: "Error processing chat deletion",
+      message: "Error deleting chat",
       error: error.message
     });
   }
 };
+
 
 

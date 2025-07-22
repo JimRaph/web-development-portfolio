@@ -16,7 +16,7 @@ const Archived = () => {
 
 
     const handleRightClick = (e, chat) => {
-    e.preventDefault(); // Prevent the default browser menu
+    e.preventDefault(); 
 
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;

@@ -15,7 +15,7 @@ const Favourite = ({setActiveIcon}) => {
     const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   
     const handleRightClick = (e) => {
-      e.preventDefault(); // Prevent the default browser menu
+      e.preventDefault(); 
   
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
@@ -38,7 +38,7 @@ const Favourite = ({setActiveIcon}) => {
     const favouriteChats = chats.filter(chat=>chat.favourite.some(
       data => data.user === user._id
     ))
-    console.log("fav chat: ", favouriteChats)
+    // console.log("fav chat: ", favouriteChats)
     
       
 

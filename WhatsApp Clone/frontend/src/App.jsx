@@ -8,6 +8,7 @@ import AuthFlow from './pages/Auth';
 import Home from './pages/home';
 import  { useState } from 'react';
 import { SocketProvider } from './context/Socket';
+import {Toaster} from 'sonner'
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         </ThemeProvider>
         </ContextProvider>
     </Router>
+     <Toaster position="top-right" />
 
      </div>
   );

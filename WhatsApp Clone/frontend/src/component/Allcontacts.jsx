@@ -2,7 +2,7 @@ import { context } from '../context/context'
 import { useTheme } from "../context/ThemeContext";
 
 
-const Allcontacts = () => {
+const Allcontacts = ({setModalOpen}) => {
 
     const { contacts, setSelectedContact, setSelectedChat} = context()
     const {HoverableItem, theme} = useTheme()
@@ -15,8 +15,8 @@ const Allcontacts = () => {
                 contacts?.map((c,_) => (
                     <HoverableItem key={c.contact._id} 
                     onClick={()=>{
-                        console.log('selected contact: ', c)
-                        
+                        // console.log('selected contact: ', c)
+                        setModalOpen(false)
                         //makes sure there is no active conversation
                         localStorage.removeItem('whatapp-selectedchat')
                         setSelectedChat(null)

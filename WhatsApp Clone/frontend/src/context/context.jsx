@@ -2,6 +2,7 @@ import {createContext, useContext, useState, useEffect} from 'react'
 import axios from 'axios'
 import { base_url } from '../../utils/baseUrl'
 import { useRef } from 'react'
+import { toast } from 'sonner'
 
 export const ContextBuild = createContext()
 
@@ -68,10 +69,12 @@ const ContextProvider = ({children}) => {
         if(data.success){
             setContact(data.contact)
         }else{
-            console.log("Failed to delete contact ", data)
+            // console.log("Failed to delete contact ", data)
+            toast.error(data?.message || 'Something went wrong')
         }
         } catch (error) {
-        console.log("ERROR deleteContact: ", error.response.data)
+          // console.log("ERROR deleteContact: ", error.response.data)
+          toast.error(error?.response?.data?.message || 'Something went wrong, try again');
         }
     }
 
@@ -85,10 +88,13 @@ const ContextProvider = ({children}) => {
         if(data.success){ 
             setContact(data.contact)
         }else{
-            console.log("Failed to get contacts ", data)
+            // console.log("Failed to get contacts ", data)
+            toast.error(data?.message || 'Something went wrong')
         }
         } catch (error) {
-        console.log("ERROR getcontact: ", error.response.data)
+          // console.log("ERROR getcontact: ", error.response.data)
+          toast.error(error?.response?.data?.message || 'Something went wrong, try again');
+
         }
     }
 
@@ -100,13 +106,16 @@ const ContextProvider = ({children}) => {
         const {data} = await axios.get(base_url + '/users/profile', {
             headers: { Authorization: `Bearer ${token}` }
         })
+        // console.log('data: ', data)
         if(data.success){
             setUser(data.user)
         }else{
-            console.log("Failed to get profile: , data")
+            console.log("Failed to get profile: ", data)
+            toast.error(data?.message || 'something went wrong')
         }
         } catch (error) {
-        console.log("ERROR getProfile: ", error.response.data)
+        // console.log("ERROR getProfile: ", error.response.data)
+          toast.error(error?.response?.data?.message || 'Something went wrong, try again');
         }
     }
 
@@ -124,40 +133,49 @@ const ContextProvider = ({children}) => {
             }
         );
         // Set the newly created chat as selected
-        setNewChat(data.chat)
-        setSelectedChat(prev => [...prev,  data.chat]);
-        localStorage.setItem('whatsapp-chat', JSON.stringify(data.chat));
-        
+        // setNewChat(data.chat)
+        if(data.success){
+
+          setSelectedChat(prev => [...prev,  data.chat]);
+          localStorage.setItem('whatsapp-chat', JSON.stringify(data.chat));
+        } else{
+          toast.error(data?.message || 'Something went wrong')
+        } 
         } catch (error) {
-        console.error('Error creating/loading chat:', error);
+        // console.error('Error creating/loading chat:', error);
+        toast.error(error?.response?.data?.message || 'Something went wrong, try again');
         }
         };
 
-    const deleteChat = async (chatId) => {
-    try {
-        const { data } = await axios.delete(`${base_url}/chats/${chatId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-        });
+      const deleteChat = async (chatId) => {
+        try {
+          const { data } = await axios.delete(`${base_url}/chats/${chatId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
 
-        if (data.success) {
-        // Immediate UI update (no need to wait for socket)
-        setChats(prev => prev.filter(chat => chat._id !== chatId));
-        
-        if (selectedChat?._id === chatId) {
-            setSelectedChat(null);
-            localStorage.removeItem('whatapp-selectedchat');
+          if (data.success) {
+            //  removes selectedChat from localStorage 
+            setChats(prev => prev.filter(chat => chat._id !== chatId));
+            const storedSelectedChat = JSON.parse(localStorage.getItem('whatapp-selectedchat') || '{}');
+            // If the currently selected chat is the deleted one, reset state
+            if (selectedChat?._id === chatId || storedSelectedChat?._id === chatId) {
+              setSelectedChat(null);
+              localStorage.removeItem('whatapp-selectedchat');
+            }
+            setSelectedContact(null);
+          } else{
+            toast.error(data?.message || 'Something went wrong')
+          }
+        } catch (error) {
+          console.error("Delete failed:", error);
+          toast.error(error?.response?.data?.message || 'Something went wrong, try again');
+          // return { 
+          //   success: false, 
+          //   error: error.response?.data?.message || "Failed to delete chat" 
+          // };
         }
-        
-        return { success: true, chatId };
-        }
-    } catch (error) {
-        console.error("Delete failed:", error);
-        return { 
-        success: false, 
-        error: error.response?.data?.message || "Failed to delete chat" 
-        };
-    }
-    };
+      };
+
 
     const identifier = (chat) => {
 
@@ -298,8 +316,14 @@ const ContextProvider = ({children}) => {
           headers: { Authorization: `Bearer ${token}` }
         })
       ])
-        
 
+      if(!individual.data.success){
+        toast.error(individual?.data?.message || 'Error getting chats')
+      }
+        
+      if(!group.data.success)[
+        toast.error(group?.data?.message || 'Error getting group chats')
+      ]
       if(!Array.isArray(individual.data.chats)){
         individual.data.chats = []
       }
@@ -323,6 +347,7 @@ const ContextProvider = ({children}) => {
       setChats(uniqueChats);
     } catch (err) {
       console.log("Error loading chats:", err.response?.data || err.message);
+      toast.error(err?.response?.data?.message || 'Something went wrong, try again');
     }
   };
 

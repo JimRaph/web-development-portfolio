@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios'
 import { base_url } from '../../utils/baseUrl';
-
+import {toast} from 'sonner'
 
 const AuthFlow = ({onAuthenticated}) => {
   // Navigation state replaces react-router
@@ -37,10 +37,11 @@ const AuthFlow = ({onAuthenticated}) => {
         setVerificationCode(response.data.otp)
         // localStorage.setItem('phone', phoneNumber)
         setCurrentView('otp');
+      }else{
+        toast.error(response?.data?.message || 'Something went wrong')
       }
-
     }catch(err){
-      console.log('eww:', err.response?.data?.message || err.message);
+      // console.log('eww:', err.response?.data?.message || err.message);
       setError(err.response?.data?.message || 'An error occurred'); 
 
     }
@@ -73,9 +74,11 @@ const AuthFlow = ({onAuthenticated}) => {
           localStorage.setItem('whatsapp-user', JSON.stringify(data.user));
           localStorage.removeItem('whatsapp-currentView')
           onAuthenticated()
+        }else{
+          toast.error(data?.message || 'Something went wrong')
         }
     } catch (error) {
-      console.log('eww:', error.response?.data?.message || error.message);
+      // console.log('eww:', error.response?.data?.message || error.message);
       setError(error.response?.data?.message || 'An error occurred'); 
     }
  

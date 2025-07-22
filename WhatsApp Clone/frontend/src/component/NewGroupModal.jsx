@@ -9,7 +9,7 @@ import { useTheme } from '../context/ThemeContext';
 const NewGroupModal = ({setModalOpen}) => {
   const {  setGroupModal, contacts, 
     setSelectedChat,setChats, 
-  setGroups,setSelectedContacts, selectedContacts } = context();
+  setSelectedContacts, selectedContacts } = context();
 
   const {theme} = useTheme()
   
@@ -19,6 +19,8 @@ const NewGroupModal = ({setModalOpen}) => {
   const [selectedDuration, setSelectedDuration] = useState(""); 
   const [selectedImage, setSelectedImage] = useState(null);
   const [avatar, setAvatar] = useState(null)
+  const [error, setError] = useState(null)
+
 
   const contactModal = useRef()
 
@@ -32,9 +34,11 @@ const NewGroupModal = ({setModalOpen}) => {
     formdata.append('group_name',groupName);
     formdata.append('duration', selectedDuration);
     formdata.append('avatar', selectedImage);
-    formdata.append('participants', JSON.stringify(selectedContacts.map(contact => contact._id)));
+    formdata.append('participants', JSON.stringify(selectedContacts.map(contact => contact.contact._id)));
    
     try {
+      setError(null)
+
       const response = await axios.post(`${base_url}/chats/group`, formdata, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('whatsapp-token')}`,
@@ -44,28 +48,38 @@ const NewGroupModal = ({setModalOpen}) => {
       // console.log('Group created successfully', response)
 
 
-      setGroups((prev) => {
-        const exists = prev.some(chat => chat._id === response.data.chat._id);
-        if (exists) {
-          return prev.map(chat =>
-            chat._id === response.data.chat._id
-              ? { ...chat, latestMessage: response.data.chat.latestMessage }
-              : chat
-          );
-        }
+      // setChats((prev) => {
+      //   const exists = prev.some(chat => chat._id === response.data.chat._id);
+      //   if (exists) {
+      //     return prev.map(chat =>
+      //       chat._id === response.data.chat._id
+      //         ? { ...chat, latestMessage: response.data.chat.latestMessage }
+      //         : chat
+      //     );
+      //   }
+      //   return [...prev, response.data.chat];
+      // })
       
-        return [...prev, response.data.chat];
-      })
-      
-      
-      setSelectedChat(response.data.chat)
-      setChats(prev => [...prev, response.data.chat]);
+      if(response.data.success){
+        setSelectedChat(response.data.chat)
+        setChats(prev => [...prev, response.data.chat]);
+        setError(null)
+        setGroupModal(false)
+        setModalOpen(false)
+      }else{
+        console.log("Failed to add contact: ", response.data.response.message)
+        setError(response.data.response.message)
+      }
+
     } catch (error) {
       console.log('Error creating group from newgropmodal', error)
-    }finally{
-      setGroupModal(false)
-      setModalOpen(false)
+      setError(error.response.data.message)
+
     }
+    // finally{
+    //   setGroupModal(false)
+    //   setModalOpen(false)
+    // }
   }
   // Toggle contact selection
     const fileInputRef = useRef(null);
@@ -115,11 +129,21 @@ const NewGroupModal = ({setModalOpen}) => {
   }
   },[])
 
-  // console.log('ALL CONTACTS FROM NEW GROUP MODAL: ', contacts)
+  useEffect(() => {
+    if (error) {
+        const timer = setTimeout(() => {
+        setError('');
+        }, 3000); 
+        return () => clearTimeout(timer); 
+    }
+  }, [error]);
+
+  console.log('ALL CONTACTS FROM NEW GROUP MODAL: ', contacts)
+  console.log('ALL CONTACTS : ', selectedContacts)
 
   return (
     <div ref={contactModal}
-     className={`absolute flex right-5 top-10 ${theme.main} ${theme.textPrimary}`}>
+     className={`absolute flex right-5 top-10 ${theme.main} ${theme.textPrimary} z-5`}>
 
     <div className=" p-3 flex flex-col h-140  overflow-y-scroll custom-scrollbar w-84 shadow-lg rounded-md left-0">
 
@@ -132,8 +156,8 @@ const NewGroupModal = ({setModalOpen}) => {
           <p className={`${theme.textSecondary}`}>Search name or number</p>
         ) : (
           selectedContacts.map((contact) => (
-            <div key={contact.Phone} className="flex flex-nowrap items-center space-x-2 bg-green-600 px-2 py-1 rounded-lg mr-2">
-              <img src={contact?.contact.avatar} alt={contact?.Phone} className="w-3 h-3 rounded-full" />
+            <div key={contact.contact.Phone} className="flex flex-nowrap items-center space-x-2 bg-green-600 px-2 py-1 rounded-lg mr-2">
+              <img src={contact?.contact.avatar} alt='pic' className="w-3 h-3 rounded-full" />
               <span className="text-sm text-nowrap">{contact?.firstname + ' ' + contact?.lastname}</span>
             </div>
           ))
@@ -265,6 +289,9 @@ const NewGroupModal = ({setModalOpen}) => {
          </div>
          <p className='flex-1 mt-4'>All new messages in this chat will disappear<br />
          after the selected duration</p>
+         {error && (
+            <p className='text-red-500'>{error}</p>
+          )}
 
          {selectedContacts.length > 0 && (
           <div className="flex space-x-2 justify-between">

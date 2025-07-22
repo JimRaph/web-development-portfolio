@@ -4,6 +4,7 @@ import { context } from '../context/context';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { base_url } from '../../utils/baseUrl';
+import {toast} from 'sonner'
 
 const Starred = () => {
   const { theme, HoverableItem } = useTheme();
@@ -32,9 +33,12 @@ const Starred = () => {
         if(response.data.success){
           setStarredMessages(response.data.messages);
           // console.log(response.data.messages)
+        }else{
+          toast.error(response.data.message || 'Error fetching starred messages')
         }
       } catch (error) {
-        console.error("Error fetching starred messages:", error);
+        // console.error("Error fetching starred messages:", error);
+        toast.error(error?.response?.data?.message || 'Something went wrong, try again');
       }
     };
     
@@ -77,13 +81,13 @@ const Starred = () => {
 
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-center">
-                  <span className="font-semibold truncate">{msg.chat.type==='group' ? msg.chat.name : name(msg)}</span>
+                  <span className="font-semibold truncate">{msg.chat?.type==='group' ? msg.chat.name : name(msg)}</span>
                   <span className={`text-xs ${theme.textPrimary} font-semibold`}>
                     {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
                 <p className={`text-sm truncate ${theme.textSecondary} font-bold`}>
-                  {msg.chat.type==='group' && (msg.sender.username || name(msg))+ ': '} {msg.content || (msg.media ? "📷 Media" : "")}
+                  {msg.chat?.type==='group' && (msg.sender.username || name(msg))+ ': '} {msg.content || (msg.media ? "📷 Media" : "")}
                 </p>
               </div>
             </HoverableItem>

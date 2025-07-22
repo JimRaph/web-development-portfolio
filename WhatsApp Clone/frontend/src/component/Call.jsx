@@ -9,14 +9,14 @@ const Call = () => {
   const {calls, user, contacts, formatMessageTime} = context()
 
 
-    const getInfo = (participants) => {
-     const otherUser = participants.find(participant => participant._id !== user.id)
-     const isContact = contacts.find(contact => contact.contact._id === otherUser._id)
-     const name = isContact ?  `${isContact.firstname} ${isContact.lastname}` 
-              : otherUser.Phone;
-     const avatar = isContact ? isContact.contact.avatar : otherUser.avatar
-      return [name, avatar]
-    }
+  const getInfo = (participants) => {
+    const otherUser = participants.find(participant => participant._id !== user.id)
+    const isContact = contacts.find(contact => contact.contact._id === otherUser._id)
+    const name = isContact ?  `${isContact.firstname} ${isContact.lastname}` 
+            : otherUser.Phone;
+    const avatar = isContact ? isContact.contact.avatar : otherUser.avatar
+    return [name, avatar]
+  }
 
 
   return (

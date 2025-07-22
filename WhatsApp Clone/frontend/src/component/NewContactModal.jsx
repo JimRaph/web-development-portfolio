@@ -33,6 +33,7 @@ const NewContactModal = ({ onClose }) => {
   const [search, setSearch] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(countryCodes[0]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [error, setError] = useState(null)
   const {setContact} = context()
 
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -66,6 +67,8 @@ const NewContactModal = ({ onClose }) => {
     }
     
     try {
+      setError(null)
+
       const { data } = await axios.post(
         `${base_url}/users/contacts`, 
         {
@@ -83,21 +86,34 @@ const NewContactModal = ({ onClose }) => {
       console.log(data)
       if(data.success){
         setContact(prev => [...prev, data.contact])
-        console.log("Contact added: ", data.contact)
+        // console.log("Contact added: ", data.contact)
+        setError(null)
+        onClose();
       }else{
-        console.log("Failed to add contact: ", data.response.message)
+        // console.log("Failed to add contact: ", data.response.message)
+        setError(data.response.message)
       }
     } catch (error) {
       console.log("Error from onSubmit func in NewContactModal file: ", error)
+       setError(error.response.data.message)
     }
-    finally{
-      onClose();
-    }
+    // finally{
+    //   onClose();
+    // }
     // onClose();
   };
 
+  useEffect(() => {
+    if (error) {
+        const timer = setTimeout(() => {
+        setError('');
+        }, 3000); 
+        return () => clearTimeout(timer); 
+    }
+}, [error]);
+
   return (
-    <div onClick={handleClickOutside} className='absolute w-svw h-svh flex flex-col justify-center items-center bg-black/50 text-white z-1'>
+    <div onClick={handleClickOutside} className='absolute w-svw h-svh flex flex-col justify-center items-center bg-black/50 text-white z-5'>
       <div ref={modalRef} className='flex flex-col space-y-4 min-w-md bg-[#111b21] p-6 rounded-lg shadow-lg'>
         <h2 className="text-lg font-bold mb-4">New Contact</h2>
         <p className='m-auto rounded-full bg-[#274152] p-4'>
@@ -152,9 +168,12 @@ const NewContactModal = ({ onClose }) => {
               )}
             </div>
 
-            <input
+           <input
               {...register('Phone')}
-              type="text"
+              type="telephone"
+              onInput={(e) => {
+                  e.target.value = e.target.value.replace(/\D/g, '');
+                }}
               className='bg-[#274152] text-white rounded-md p-2 w-full'
               placeholder="Enter Phone number"
             />
@@ -179,6 +198,10 @@ const NewContactModal = ({ onClose }) => {
             placeholder="Enter last name"
           />
           {errors.last_name && <p className="text-red-500 text-xs">{errors.last_name.message}</p>}
+
+          {error && (
+            <p className='text-red-500'>{error}</p>
+          )}
 
           {/* Sync Contacts Toggle */}
           <div className='flex justify-between items-center'>

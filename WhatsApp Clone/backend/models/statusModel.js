@@ -7,14 +7,14 @@ const statusSchema = new mongoose.Schema({
         required: true
     },
     content: {
-        type: String,  // For text statuses
+        type: String,  
         trim: true
     },
     media: {
-        type: String, // Store image/video URLs
+        type: String,  
     },
     caption: {
-        type: String,  // Optional caption for media
+        type: String, 
         trim: true
     },
     type: {
@@ -28,12 +28,12 @@ const statusSchema = new mongoose.Schema({
     }],
     viewsCount: {
         type: Number,
-        default: 0  // Increment when a user views the status
+        default: 0  
     },
     expiresAt: {
         type: Date,
-        default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), // Auto-delete after 24 hours
-        index: { expires: '24h' } // TTL Index for auto-deletion
+        default: () => new Date(Date.now() + 24 * 60 * 60 * 1000), 
+        index: { expires: '24h' }
     }
 }, { timestamps: true });
 

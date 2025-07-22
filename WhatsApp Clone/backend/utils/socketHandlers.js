@@ -6,12 +6,28 @@ import {Call} from "../models/callModel.js"
 export const socketHandlers = (io, socket) => {
   // Chat and messaging handlers
 
+  console.log(`User ${socket.userId} joined their personal room`);
 
-  socket.on("join_chat", (chatId) => {
-    socket.join(chatId);
-    console.log(`User ${socket.userId} joined chat ${chatId}`);
-    
-    // Process any pending deliveries for this user
+  socket.on('join_chat', (chatId) => {
+    console.log(`User ${socket.userId} joining ${chatId}`);
+      
+      // Leave previous chat if needed 
+    if (socket.currentChat) {
+        socket.leave(socket.currentChat);
+      }
+        // jooin new room
+      socket.join(chatId);
+      socket.currentChat = chatId; 
+      console.log(`User ${socket.userId} joined their personal room`);
+      socket.emit('room_joined', chatId);
+  });
+
+
+  socket.on('leave_chat', (chatId) => {
+    socket.leave(chatId);
+    if (socket.currentChat === chatId) {
+      delete socket.currentChat;
+    }
   });
 
 
@@ -58,37 +74,40 @@ export const socketHandlers = (io, socket) => {
     });
   });
 
-
   // Message delivery handlers
   socket.on("mark_delivered", async ({ messageId, chatId }) => {
-  try {
-    const message = await Message.findOneAndUpdate(
-      {
-        _id: messageId,
-        deliveredTo: { $ne: socket.userId }
-      },
-      {
-        $addToSet: { deliveredTo: socket.userId },
-        $set: { status: 'delivered', deliveredAt: new Date() }
-      },
-      { new: true }
-    ).populate('sender receiver');
+    
+    try {
+      const message = await Message.findOneAndUpdate(
+        {
+          _id: messageId,
+          deliveredTo: { $ne: socket.userId }
+        },
+        {
+          $addToSet: { deliveredTo: socket.userId },
+          $set: { status: 'delivered', deliveredAt: new Date() }
+        },
+        { new: true }
+      ).populate('sender receiver');
 
-    if (message) {
-      // Emit to all chat participants
-      io.to(chatId).emit('message_status', {
-        messageId: message._id,
-        status: 'delivered',
-        deliveredTo: message.deliveredTo
-      });
-      
-      // Also emit chat update
-      const updatedChat = await Chat.findById(chatId).populate('participants latestMessage');
-      io.to(chatId).emit('chat_updated', updatedChat);
+      console.log('mark delivered')
+      if (message) {
+        // Emit to all chat participants
+        const senderId = message.sender._id.toString(); //new
+        
+        io.to(senderId).emit('message_status', { // chatId for senderId
+          messageId: message._id,
+          status: 'delivered',
+          deliveredTo: message.deliveredTo
+        });
+        console.log('message status delivered ')
+        // Also emit chat update
+        const updatedChat = await Chat.findById(chatId).populate('participants latestMessage');
+        io.to(chatId).emit('chat_updated', updatedChat);
+      }
+    } catch (error) {
+      console.error('Delivery receipt error:', error);
     }
-  } catch (error) {
-    console.error('Delivery receipt error:', error);
-  }
   });
 
   // Modified read receipt handler
@@ -103,20 +122,25 @@ export const socketHandlers = (io, socket) => {
         { new: true }
       ).populate('sender receiver');
 
+      console.log('mark read')
       if (message) {
-        // Update chat unread count
+
+        // Emit to all participants
+        const senderId = message.sender._id.toString(); 
+        io.to(senderId).emit('message_status', { 
+          messageId: message._id,
+          status: 'read',
+          readBy: message.readBy
+        });
+
+        console.log('message status read')
+
+         // Update chat unread count
         await Chat.findByIdAndUpdate(
           chatId,
           { $set: { 'unreadCounts.$[elem].count': 0 } },
           { arrayFilters: [{ 'elem.user': socket.userId }] }
         );
-
-        // Emit to all participants
-        io.to(chatId).emit('message_status', {
-          messageId: message._id,
-          status: 'read',
-          readBy: message.readBy
-        });
 
         const updatedChat = await Chat.findById(chatId).populate([
           { path: 'participants', select: '-verificationCode -contacts' },
@@ -141,12 +165,13 @@ export const socketHandlers = (io, socket) => {
           'elem.user': socket.userId 
         }]
       });
-      
+      console.log('mark chat read')
       // Notify other participants
       io.to(chatId).emit('chat_read_update', { 
         chatId,
         userId: socket.userId
       });
+      console.log('mark chat read sent')
     } catch (error) {
       console.error('Error marking chat as read:', error);
     }
@@ -162,71 +187,70 @@ export const socketHandlers = (io, socket) => {
 // ------------------------------------------
 
     // Handle call initiation
-socket.on('initiate_call', async ({ callId, offer }) => {
+  socket.on('initiate_call', async ({ callId, offer }) => {
         // Store offer in DB
-        socket.join(callId);
-        await Call.findByIdAndUpdate(callId, {
-            'connectionData.offer': offer,
-            status: 'ringing'
-        });
-        console.log('ON INIT CALLID: ', callId)
-        
-        // Notify participants
-        const call = await Call.findById(callId).populate('participants caller');
-        console.log('CALL IN INIT CALL: ', call)
-        call.participants.forEach(participant => {
-            if (participant._id.toString() !== socket.userId) {
-                io.to(participant._id.toString()).emit('incoming_call',
-                {
-                  ...call.toObject({ virtuals: true }),
-                  _id: call._id,
-                  // id: undefined
-                }
-                );
+    socket.join(callId);
+    await Call.findByIdAndUpdate(callId, {
+        'connectionData.offer': offer,
+        status: 'ringing'
+    });
+    console.log('ON INIT CALLID: ', callId)
+    
+    // Notify participants
+    const call = await Call.findById(callId).populate('participants caller');
+    console.log('CALL IN INIT CALL: ', call)
+    call.participants.forEach(participant => {
+        if (participant._id.toString() !== socket.userId) {
+            io.to(participant._id.toString()).emit('incoming_call',
+            {
+              ...call.toObject({ virtuals: true }),
+              _id: call._id,
+              // id: undefined
             }
-        });
+            );
+        }
     });
+  });
 
-    socket.on('call_answer', async ({ callId, answer }) => {
-      console.log('ON CALL_ANSWER ID: ', callId, answer)
-      socket.join(callId);
-        const call = await Call.findByIdAndUpdate(callId, {
-            'connectionData.answer': answer,
-            status: 'active',
-            picked: 'true'
-        });
-        console.log('CALLi: ', call);
-        // Send answer to caller
-        io.to(call.caller.toString()).emit('call_accepted', { callId, answer });
+  socket.on('call_answer', async ({ callId, answer }) => {
+    console.log('ON CALL_ANSWER ID: ', callId, answer)
+    socket.join(callId);
+      const call = await Call.findByIdAndUpdate(callId, {
+          'connectionData.answer': answer,
+          status: 'active',
+          picked: 'true'
+      });
+      console.log('CALLi: ', call);
+      // Send answer to caller
+      io.to(call.caller.toString()).emit('call_accepted', { callId, answer });
+  });
+
+  socket.on('ice_candidate', ({ callId, candidate }) => {
+    // Broadcast candidate to other participants
+    console.log('ON ICE CAND: ', candidate)
+    console.log('ID: ', callId)
+    socket.to(callId).emit('new_ice_candidate', { callId, candidate });
+      
+  });
+
+  socket.on('end_call', async ({ callId }) => {
+    const call = await Call.findByIdAndUpdate(callId, {
+        status: 'ended',
+        endTime: new Date()
     });
+    // Notify all participants
+    io.to(callId).emit('call_ended', call)
+  });
 
-    socket.on('ice_candidate', ({ callId, candidate }) => {
-        // Broadcast candidate to other participants
-        console.log('ON ICE CAND: ', candidate)
-        console.log('ID: ', callId)
-        socket.to(callId).emit('new_ice_candidate', { callId, candidate });
-        
-    });
-
-    socket.on('end_call', async ({ callId }) => {
-        const call = await Call.findByIdAndUpdate(callId, {
-            status: 'ended',
-            endTime: new Date()
-        });
-        // Notify all participants
-        io.to(callId).emit('call_ended', call)
-    });
-
-    socket.on('mute_state', ({ callId, isMuted, senderId }) => {
-      if (!callId) {
-        console.error('Rejected mute_state - missing callId from', senderId);
-        return;
+  socket.on('mute_state', ({ callId, isMuted, senderId }) => {
+    if (!callId) {
+      console.error('Rejected mute_state - missing callId from', senderId);
+      return;
     }
-          console.log(`Emitting mute=${isMuted} from ${senderId} to room ${callId}`);
+    console.log(`Emitting mute=${isMuted} from ${senderId} to room ${callId}`);
 
     io.to(callId).emit('remote_mute_state', { isMuted, senderId });
     // socket.emit('remote_mute_state', { isMuted })
     });
 
-
-};
+  };

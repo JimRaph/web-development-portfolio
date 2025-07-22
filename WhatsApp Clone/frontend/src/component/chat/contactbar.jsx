@@ -11,6 +11,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useEffect } from "react";
 
 
+
 const Contactbar = ({setActiveIcon}) => {
 
       const {theme, HoverableItem} = useTheme()
@@ -21,6 +22,7 @@ const Contactbar = ({setActiveIcon}) => {
       const [showModal, setShowModal] = useState(false);
       const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
       const [contextChat, setContextChat] = useState(null)
+      const [chatList, setChatList] = useState([]);
 
     const modalOpenRef = useRef();
     const filterDropDownRef = useRef();
@@ -40,7 +42,7 @@ const Contactbar = ({setActiveIcon}) => {
   // --------------------------------------------
   
   const handleRightClick = (e, chat) => {
-    e.preventDefault(); // Prevent the default browser menu
+    e.preventDefault();
 
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
@@ -76,12 +78,18 @@ const Contactbar = ({setActiveIcon}) => {
     }
   };
 
-  const chatList = chats.filter(chat => {
-    const notArchived = chat.archived.find(ca=> ca.user === user._id)
-    return !notArchived
-  })
+  
   // console.log('no arch: ', chatList)
 
+useEffect(()=>{
+    if (chats) {
+    const filtered = chats.filter(chat => {
+      const notArchived = chat.archived.find(ca => ca.user === user._id);
+      return !notArchived;
+    });
+    setChatList(filtered);
+  }
+},[chats, user._id])
 
   useEffect(() => {
       document.addEventListener('click', handleClickOutside);
@@ -203,9 +211,9 @@ const Contactbar = ({setActiveIcon}) => {
           {chatList?.sort((a,b) =>{
             if (a.pinned?.status && !b.pinned?.status) return -1;
             return 0;
-                }).map((chat, index) => (
+                }).map((chat) => (
                     <HoverableItem
-              key={index}
+              key={chat._id}
               onContextMenu={(e) => handleRightClick(e, chat)}
               onClick={() => {
                 // console.log('chat selected: ', chat);
@@ -215,7 +223,7 @@ const Contactbar = ({setActiveIcon}) => {
               className={`flex w-full max-w-full items-center space-x-2 p-2 rounded-md`}
             >
               <img
-                src={identifier(chat)[1]}
+                src={identifier(chat)[1] || null}
                 alt="user1"
                 className={`rounded-full h-12 ${theme.border} border w-12`}
               />

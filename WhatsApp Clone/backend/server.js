@@ -75,6 +75,12 @@ io.on("connection", (socket) => {
   // for targeted messages
   socket.join(socket.userId.toString()); 
 
+    const originalEmit = socket.emit;
+  socket.emit = function(event, ...args) {
+    console.log(`[SOCKET EMIT] Event: '${event}' | Args:`, args, '| Socket ID:', socket.id);
+    return originalEmit.call(this, event, ...args);
+  };
+
 
   // Pass everything to socket handlers
   socketHandlers(io, socket);
