@@ -10,8 +10,9 @@ A full-stack real-time chat application that mirrors the core experience and int
 - 🧑‍🤝‍🧑 **Group & Individual Chats** – Chat privately or in groups
 - 📎 **Media Upload** – Share photos, videos, audio files, documents, and more
 - 📌 **Chat Controls** – Archive, favourite, and pin conversations
+- 🪡 ** Responsiveness** - Ui adjust according to the screen size
 - ⭐ **Starred Messages** – Mark and save important messages
-- 📞 **Voice & Video Calling** – Peer-to-peer calls built right in
+- 📞 **Voice & Video Calling** – Peer-to-peer calls built right in using webRTC
 - 🔁 **Live Sync** – Seamless updates via **Socket.io**
 - 🖼️ **WhatsApp-Inspired UI** – Clean and responsive design
 - 🗂️ **Status UI (Mock)** – Designed UI for status but not functional yet
@@ -19,6 +20,7 @@ A full-stack real-time chat application that mirrors the core experience and int
 > ✅ All chat-related features closely follow the WhatsApp experience — just like the real thing!
 
 ---
+<img width="1919" height="941" alt="Screenshot 2025-07-22 153841" src="https://github.com/user-attachments/assets/eeaff1e1-3e83-4491-97fd-cd6be29a4d2b" />
 
 ## 🛠 Tech Stack
 
@@ -28,6 +30,7 @@ A full-stack real-time chat application that mirrors the core experience and int
 - TailwindCSS
 - Lucide Icons
 - Axios
+- sonner
 
 ### 🌐 Backend
 - Node.js
@@ -44,8 +47,8 @@ A full-stack real-time chat application that mirrors the core experience and int
 ## TEST
 Just like with WhatsApp, you can only interact with contacts/numbers already registered on WhatsApp.
 Add any of the numbers below as contact and start messaging/calling.
-- 101010
-- 43534625
+- 5678
+- 1234
 Also you can register new numbers if you prefer and try out the features.
 ---
 ## 📄 TODO
