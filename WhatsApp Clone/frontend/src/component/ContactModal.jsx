@@ -1,12 +1,12 @@
 import Allcontacts from './Allcontacts'
 import { Keyboard,Users } from 'lucide-react'
-import { context } from '../context/context'
+import { useAppContext } from '../context/context'
 import { useTheme } from '../context/ThemeContext'
 import { useEffect } from 'react'
 
 const ContactModal = ({setModalOpen, ref}) => {
     
-    const {user, setGroupModal, setNewContactModal } = context()
+    const {user, setGroupModal, setNewContactModal } = useAppContext() 
     const {theme} = useTheme()
     
     const toggleGroupModal = () => {

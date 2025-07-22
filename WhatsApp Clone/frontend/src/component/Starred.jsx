@@ -1,6 +1,6 @@
 import { Star, Search } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { context } from '../context/context';
+import { useAppContext } from '../context/context';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { base_url } from '../../utils/baseUrl';
@@ -8,7 +8,7 @@ import {toast} from 'sonner'
 
 const Starred = () => {
   const { theme, HoverableItem } = useTheme();
-  const { scrollToMessage, token,contacts } = context();
+  const { scrollToMessage, token,contacts } = useAppContext() ;
   const [starredMessages, setStarredMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 

@@ -1,5 +1,5 @@
 import  { useState,useRef, useEffect } from 'react';
-import { context } from '../context/context';
+import { useAppContext } from '../context/context';
 import {Camera, Smile} from 'lucide-react'
 import EmojiPicker from "emoji-picker-react"
 import axios from 'axios';
@@ -9,7 +9,7 @@ import { useTheme } from '../context/ThemeContext';
 const NewGroupModal = ({setModalOpen}) => {
   const {  setGroupModal, contacts, 
     setSelectedChat,setChats, 
-  setSelectedContacts, selectedContacts } = context();
+  setSelectedContacts, selectedContacts } = useAppContext() ;
 
   const {theme} = useTheme()
   

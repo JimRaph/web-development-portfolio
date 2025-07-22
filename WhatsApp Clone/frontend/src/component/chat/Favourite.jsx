@@ -1,6 +1,6 @@
 import {useState} from "react";
 import { ArrowLeft,Bell,PinIcon,Search} from "lucide-react";
-import { context } from '../../context/context'
+import { useAppContext } from '../../context/context'
 import Contextmenu from "./Contextmenu";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -10,7 +10,7 @@ const Favourite = ({setActiveIcon}) => {
     const {theme, HoverableItem} = useTheme()
     const {chats, user, identifier, formatMessageTime, getUnreadCount, 
       setSelectedChat
-    } = context()
+    } = useAppContext() 
     const [showModal, setShowModal] = useState(false);
     const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   

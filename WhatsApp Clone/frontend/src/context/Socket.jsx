@@ -1,13 +1,13 @@
 // socket.jsx
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
-import { context } from "./context";
+import { useAppContext } from "./context";
 
 const SocketContext = createContext(null);
 
 export const SocketProvider = ({ children }) => {
   const { token, user, chats, setChats, setSelectedChat, 
-    selectedContact, setMessages, selectedChat } = context();
+    selectedContact, setMessages, selectedChat } = useAppContext() ;
 
   const socketRef = useRef(null); // persistent socket instance
   const [connected, setConnected] = useState(false);
@@ -21,7 +21,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!token || !user?._id) return;
 
-    const socket = io("http://localhost:5000", {
+    const socket = io(import.meta.env.VITE_BASE_URL, {
       auth: { token }
     });
 

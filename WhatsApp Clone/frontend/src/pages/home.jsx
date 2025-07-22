@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Header from "../component/header";
 import Sidebar from "../component/sidebar";
 import Chatarea from "../component/chatarea";
-import { context } from "../context/context";
+import { useAppContext } from "../context/context";
 import NewContactModal from "../component/NewContactModal";
 import Mainbar from "../component/Mainbar";
 import ChatScreen from "../component/chatScreen";
@@ -12,7 +12,7 @@ import { useTheme } from "../context/ThemeContext";
 
 const Home = () => {
 
-  const {user,newContactModal, setNewContactModal, selectedContact, selectedChat} = context();
+  const {user,newContactModal, setNewContactModal, selectedContact, selectedChat} = useAppContext() ;
   const [activeIcon, setActiveIcon] = useState('message')
   const {theme } = useTheme()
   const [open, setOpen] = useState(false)

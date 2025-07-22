@@ -370,6 +370,6 @@ const ContextProvider = ({children}) => {
 
 }
 
-export const context = () => useContext(ContextBuild);
+export const useAppContext  = () => useContext(ContextBuild);
 
 export default ContextProvider

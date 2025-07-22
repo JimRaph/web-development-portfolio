@@ -8,7 +8,7 @@ import {  Eye, Pin, Star,
   BellOffIcon,
   ArchiveRestoreIcon
 } from "lucide-react";
-import { context } from '../../context/context';
+import { useAppContext } from '../../context/context';
 import axios from 'axios';
 import { base_url } from '../../../utils/baseUrl';
 import {toast} from 'sonner'
@@ -16,7 +16,7 @@ import {toast} from 'sonner'
 const Contextmenu = ({ modalPosition, setShowModal, selectedContextChat }) => {
   
   const modalRef = useRef();
-  const { chats, setChats,user, setMessages, deleteChat } = context();
+  const { chats, setChats,user, setMessages, deleteChat } = useAppContext() ;
   const [isLoading, setIsLoading] = useState(false);
 
   const getStatus = (field) => 

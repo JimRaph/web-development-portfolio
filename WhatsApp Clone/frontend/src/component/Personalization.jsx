@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { context } from '../context/context';
+import { useAppContext } from '../context/context';
 
 const Personalization = () => {
   const [open, setOpen] = useState(false);
@@ -10,7 +10,7 @@ const Personalization = () => {
   const dropdownRef = useRef();
   const dropdownRefChatBg = useRef();
   const {toggleTheme, theme} = useTheme()
-  const {chatBg, setChatBg} = context()
+  const {chatBg, setChatBg} = useAppContext() 
 
   const colours = [
     "bg-[#8FDAC1]",

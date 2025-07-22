@@ -1,10 +1,10 @@
-import { context } from '../context/context'
+import { useAppContext  } from '../context/context'
 import { useTheme } from "../context/ThemeContext";
 
 
 const Allcontacts = ({setModalOpen}) => {
 
-    const { contacts, setSelectedContact, setSelectedChat} = context()
+    const { contacts, setSelectedContact, setSelectedChat} = useAppContext ()
     const {HoverableItem, theme} = useTheme()
     
 

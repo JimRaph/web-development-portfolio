@@ -1,5 +1,5 @@
 import { Bell, PinIcon, Search } from 'lucide-react'
-import { context } from '../context/context';
+import { useAppContext } from '../context/context';
 import { useTheme } from '../context/ThemeContext';
 import { useState } from 'react';
 import Contextmenu from './chat/Contextmenu';
@@ -7,7 +7,7 @@ import Contextmenu from './chat/Contextmenu';
 const Archived = () => {
 
   const { user, chats, identifier, setSelectedChat,
-          formatMessageTime, getUnreadCount} = context()
+          formatMessageTime, getUnreadCount} = useAppContext() 
   const {theme,HoverableItem} = useTheme()
 
   const [showModal, setShowModal] = useState(false);

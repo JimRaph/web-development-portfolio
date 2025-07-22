@@ -5,7 +5,7 @@ import {
    Trash,
    Download
 } from "lucide-react";
-import { context } from "../context/context";
+import { useAppContext } from "../context/context";
 import { useTheme } from "../context/ThemeContext";
 import axios from "axios";
 import { useSocket } from "../context/Socket";
@@ -21,7 +21,7 @@ const ChatScreen = ({ recipient}) => {
     selectedChat, user, token,setSelectedChat,
     messages, setMessages, setChats, identifier, messageRefs, 
     selectedContact, chatBg, chats, setSelectedContact
-  } = context();
+  } = useAppContext() ;
   const { theme, HoverableItem } = useTheme();
 
   const [showFiles, setShowFiles]  =useState(false)

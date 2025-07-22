@@ -6,13 +6,13 @@ import { Menu,
  } from 'lucide-react'
 import Setting from './Setting'
 import { useTheme } from '../context/ThemeContext'
-import { context } from '../context/context'
+import { useAppContext } from '../context/context'
 
 
 const Sidebar = ({setActiveIcon, setOpen, open}) => {
 
   const {theme} = useTheme()
-  const {user, setSelectedContact, setSelectedChat} = context()
+  const {user, setSelectedContact, setSelectedChat} = useAppContext() 
 
   const [setting, setSetting] = useState(false)
   const settingRef = useRef()

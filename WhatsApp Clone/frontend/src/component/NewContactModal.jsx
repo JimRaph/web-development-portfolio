@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
 import { base_url } from '../../utils/baseUrl';
-import { context } from '../context/context';
+import { useAppContext } from '../context/context';
 import { useEffect } from 'react';
 
 const schema = yup.object().shape({
@@ -34,7 +34,7 @@ const NewContactModal = ({ onClose }) => {
   const [selectedCountry, setSelectedCountry] = useState(countryCodes[0]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [error, setError] = useState(null)
-  const {setContact} = context()
+  const {setContact} = useAppContext() 
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),

@@ -1,10 +1,10 @@
 import NewGroupModal from './NewGroupModal'
 import ContactModal from './ContactModal'
-import { context } from '../context/context'
+import { useAppContext } from '../context/context'
 
 const Modal = ({modalOpen,setModalOpen, ref}) => {
     
-    const {groupModal} = context()
+    const {groupModal} = useAppContext() 
    
 
   return (

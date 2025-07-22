@@ -5,7 +5,7 @@ import { SquarePen, ListFilter, Search, MessageSquare,
   Bell
 } from "lucide-react";
 import Modal from "../modal";
-import { context } from '../../context/context'
+import { useAppContext } from '../../context/context'
 import Contextmenu from "./Contextmenu";
 import { useTheme } from "../../context/ThemeContext";
 import { useEffect } from "react";
@@ -17,7 +17,7 @@ const Contactbar = ({setActiveIcon}) => {
       const {theme, HoverableItem} = useTheme()
       const [modalOpen, setModalOpen] = useState(false)
       const { setGroupModal, chats, user, identifier,
-        setSelectedChat,  formatMessageTime, getUnreadCount} = context()
+        setSelectedChat,  formatMessageTime, getUnreadCount} = useAppContext() 
       const [showFilterDropdown, setShowFilterDropdown] = useState(false);
       const [showModal, setShowModal] = useState(false);
       const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });

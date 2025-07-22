@@ -107,13 +107,13 @@ const Notifications = () => {
       {/* SHOW BADGE NOTIFICATION */}
       <div className=' relative mt-4 text-sm w-[70%]'>
         <p>Show taskbar notification badge</p>
-        <p onClick={()=>setModalBadge(true)}
+        <div onClick={()=>setModalBadge(true)}
         className={ `flex items-center ${badge==="Only when app is open" ? "space-x-4":
          "space-x-22"}  ${theme.main} border-1 ${theme.border} w-fit p-1 pl-3 mt-3 rounded-md`}>
           <p>{badge}</p>
           <ChevronDown size={15} />
           
-        </p>
+        </div>
         {modalBadge && badgeModalHandler()}
       </div>
 
@@ -122,7 +122,7 @@ const Notifications = () => {
       
           <div className="mt-4">
             
-            <p className="text-xs flex items-center justify-between">
+            <div className="text-xs flex items-center justify-between">
             <p className={`${theme.textSecondary}`}>Messages</p>
               {message === "Off" ? (
             <span className="flex space-x-2 items-center" onClick={() => setMessage("On")}>
@@ -163,12 +163,13 @@ const Notifications = () => {
               </svg>
             </span>
           )}
-            </p>
+            </div>
           </div>
 
           <div className="mt-4">
-            <p className="text-xs flex items-center justify-between">
-            <p className={`${theme.textSecondary}`}>Calls</p>            {calls === "Off" ? (
+            <div className="text-xs flex items-center justify-between">
+            <p className={`${theme.textSecondary}`}>Calls</p>            
+            {calls === "Off" ? (
             <span className="flex space-x-2 items-center" onClick={() => setCalls("On")}>
               <span>{calls}</span>
               <svg
@@ -207,7 +208,7 @@ const Notifications = () => {
               </svg>
             </span>
           )}
-            </p>
+            </div>
           </div>
 
           <div className="mt-4">
@@ -424,19 +425,25 @@ const Notifications = () => {
           <p>Notification tones</p>
           <>
             <p className='text-sm'>Messsges</p>
-            <p className='flex items-center space-x-2'>
+            <div className='flex items-center space-x-2'>
               <p className={`${theme.main}  shadow-sm border-1 ${theme.border} p-2`}><Play size={17} /></p>
               <p className={`flex items-center space-x-3 ${theme.main} border-1
-               ${theme.border} p-2`}> <Music4 size={17}/><span className='text-sm'>Default</span> <ChevronDown size={15}/></p>
-            </p>
+               ${theme.border} p-2`}> 
+               <Music4 size={17}/>
+               <span className='text-sm'>Default</span> <ChevronDown size={15}/>
+               </p>
+            </div>
           </>
           <>
             <p className='text-sm'>Groups</p>
-            <p className='flex items-center space-x-2'>
+            <div className='flex items-center space-x-2'>
               <p className={`${theme.main}  shadow-sm border-1 ${theme.border} p-2`}><Play size={17} /></p>
               <p className={`flex items-center space-x-3 ${theme.main} border-1 
-               ${theme.border} p-2`}> <Music4 size={17}/><span className='text-sm'>Default</span> <ChevronDown size={15}/></p>
-            </p>
+               ${theme.border} p-2`}> 
+               <Music4 size={17}/><span className='text-sm'>Default</span> 
+               <ChevronDown size={15}/>
+              </p>
+            </div>
           </>
       </div>
 

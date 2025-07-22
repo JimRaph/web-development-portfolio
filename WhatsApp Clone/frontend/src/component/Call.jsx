@@ -1,12 +1,12 @@
 import { PhoneCallIcon, User, Search } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
-import { context } from '../context/context'
+import { useAppContext } from '../context/context'
 
 
 
 const Call = () => {
   const {theme, HoverableItem} = useTheme()
-  const {calls, user, contacts, formatMessageTime} = context()
+  const {calls, user, contacts, formatMessageTime} = useAppContext() 
 
 
   const getInfo = (participants) => {

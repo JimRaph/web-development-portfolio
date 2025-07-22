@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { context } from '../context/context'
+import { useAppContext } from '../context/context'
 import { Pencil, Smile } from 'lucide-react'
 import EmojiPicker from "emoji-picker-react"
 import { useTheme } from '../context/ThemeContext'
@@ -8,7 +8,7 @@ import { base_url } from '../../utils/baseUrl'
 
 const Profile = () => {
 
-    const { user, token, setUser } = context()
+    const { user, token, setUser } = useAppContext() 
     const {theme} = useTheme()
 
     const [isEditableName, setIsEditableName] = useState(false);
