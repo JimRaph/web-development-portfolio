@@ -1,5 +1,5 @@
 import app from '../index.js'; 
-
-import { createServer } from '@vercel/node';
+import vercel from '@vercel/node';
+const { createServer } = vercel;
 
 export default createServer(app);
