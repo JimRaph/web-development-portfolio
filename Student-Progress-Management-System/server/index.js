@@ -35,7 +35,7 @@ async function startServer(){
     // await syncAllStudentsSubmissions()
     // console.log('calling seedSyncConfig');
     // await seedSyncConfig();
-    // console.log('calling startsynccron')
+    console.log('calling startsynccron')
     // await startSyncCron();
 
     const PORT = process.env.PORT || 3001;
@@ -43,9 +43,12 @@ async function startServer(){
 
     // startCronJob();
 
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`)
-    })
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
     } catch (error) {
         console.error("Error during server startup: ", error)
     }
