@@ -54,6 +54,9 @@ if (process.env.NODE_ENV !== 'production') {
     }
 }
 
-startServer()
+const handler = async(req, res) => {
+  await startServer();
+  return app(req, res); 
+}
 
-export default app 
+export default handler
