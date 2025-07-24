@@ -15,12 +15,12 @@ const Products = () => {
   
     return (
 
-         <div>
+         <div className="">
           {loading ? (
-            <div >
+            <div  className="m-auto text-center my-20">
             <RotateLoader color="blue" loading={loading}
             />
-            </div>) : error ? (<div className="m-auto text-center">{error} - Check Your Internet Connection</div>)
+            </div>) : error ? (<div className="m-auto text-center my-20">{error} - Check Your Internet Connection</div>)
           :  (
 
             <>
