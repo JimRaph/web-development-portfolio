@@ -15,7 +15,7 @@ dotenv.config()
 
 const app = express()
 app.use(cors({
-    origin: 'http://localhost:5173'
+    origin: process.env.CLIENT_URL
 }
 ))
 app.use(express.json())
@@ -31,12 +31,12 @@ async function startServer(){
     //seed database schemas
     
     // await seedStudentsFromRatedList()
-    await syncAllStudentsContestHistory()
+    // await syncAllStudentsContestHistory()
     // await syncAllStudentsSubmissions()
-    console.log('calling seedSyncConfig');
-    await seedSyncConfig();
-    console.log('calling startsynccron')
-    await startSyncCron();
+    // console.log('calling seedSyncConfig');
+    // await seedSyncConfig();
+    // console.log('calling startsynccron')
+    // await startSyncCron();
 
     const PORT = process.env.PORT || 3001;
 

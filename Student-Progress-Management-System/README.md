@@ -50,13 +50,14 @@ npm install
 
 3. Create a `.env` file in the root directory with the following variables:
 MONGODB_URI=
-EMAIL_USER=
-EMAIL_PASS=
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-email-password-or-app-password
+CLIENT_URL=frontend url
 
-4. Seed initial sync configuration:
-uncomment out the seeding section in the index.js
-Note: after the first run, comment out the seeding area except for
-seedSyncConfig() & startSyncCron()
+4. Seed initial sync configuration (optional but recommended):
+uncomment the seeding functions in the index.js for the first run- seedStudentsFromRatedList(), seedSyncConfig();
+Since it is reading data directly from codeForce, you have to stop the terminal when you are ok with the amount of data retrieved. Or you could use the settimeout function.
+Note: after the first run, comment out the seeding functions again and uncomment the rest of the functions in the seed database schema except for seedSyncConfig() & startSyncCron(). Comment out everything if you don't need the cron job.
 
 
 ### Running the Application

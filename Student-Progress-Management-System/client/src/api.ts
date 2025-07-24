@@ -4,7 +4,7 @@ import axios from 'axios';
 // dotenv.config()
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // Adjust if your API base path differs
+  baseURL: import.meta.env.VITE_API_URL,
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' },
 });

@@ -37,4 +37,4 @@ pnpm-debug.log*
 .firebase/
 .functions/
 
-# Option
+.env
