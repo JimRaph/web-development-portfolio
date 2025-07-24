@@ -22,26 +22,22 @@ app.use(express.json())
 
 app.use('/api/students', studentRouter);
 app.use('/api', syncRouter)
+const PORT = process.env.PORT || 3001;
 
-async function startServer(){
-    try {
-    //connects to db
-    await mongoose_connector();
+//connects to db
+await mongoose_connector();
 
-    //seed database schemas
-    
-    // await seedStudentsFromRatedList()
-    // await syncAllStudentsContestHistory()
-    // await syncAllStudentsSubmissions()
-    // console.log('calling seedSyncConfig');
-    // await seedSyncConfig();
-    console.log('calling startsynccron')
-    // await startSyncCron();
+//seed database schemas
 
-    const PORT = process.env.PORT || 3001;
+// await seedStudentsFromRatedList()
+// await syncAllStudentsContestHistory()
+// await syncAllStudentsSubmissions()
+// console.log('calling seedSyncConfig');
+// await seedSyncConfig();
+console.log('calling startsynccron')
+// await startSyncCron();
 
-
-    // startCronJob();
+// startCronJob();
 
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3001;
@@ -49,13 +45,8 @@ if (process.env.NODE_ENV !== 'production') {
     console.log(`Server running on port ${PORT}`);
   });
 }
-    } catch (error) {
-        console.error("Error during server startup: ", error)
-    }
-}
-
+    
 const handler = async(req, res) => {
-  await startServer();
   return app(req, res); 
 }
 
