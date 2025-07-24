@@ -13,7 +13,6 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@vercel/node": "^2.3.0",
     "axios": "^1.10.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
@@ -22,7 +21,8 @@
     "mongoose": "^8.15.2",
     "node-cron": "^4.1.0",
     "nodemailer": "^7.0.3",
-    "requests": "^0.3.0"
+    "requests": "^0.3.0",
+    "serverless-http": "^3.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

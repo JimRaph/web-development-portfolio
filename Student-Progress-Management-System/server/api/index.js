@@ -1,5 +1,4 @@
-import app from '../index.js'; 
-import vercel from '@vercel/node';
-const { createServer } = vercel;
+import serverless from 'serverless-http';
+import app from '../index.js';
 
-export default createServer(app);
+export const handler = serverless(app);
