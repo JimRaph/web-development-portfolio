@@ -9,15 +9,18 @@ import productsRouter from './routes/product_route.js';
 import orderRouter from './routes/order_route.js';
 import seedProductRouter from './seeder.js'
 
+
+dotenv.config();
+
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: 'https://lc-e-commerce-frontend.vercel.app',
+  origin: process.env.CLIENT_URL,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }))
 
 
-dotenv.config();
+
 
 // const PORT = 3000 || process.env.PORT
 
