@@ -17,10 +17,10 @@ const Products = () => {
 
          <div>
           {loading ? (
-            <div className=" absolute top-[50%] left-[50%]">
+            <div >
             <RotateLoader color="blue" loading={loading}
             />
-            </div>) : error ? (<h1>{error}</h1>)
+            </div>) : error ? (<div className="m-auto text-center">{error} - Check Your Internet Connection</div>)
           :  (
 
             <>
