@@ -59,8 +59,10 @@ export default function StudentTable({ onViewDetails }: StudentTableProps) {
       } catch (error) {
           if (error instanceof Error) {
         setToastMessage('Error fetching students: ' + error.message);
+        console.log(error)
       } else {
         setToastMessage('An unexpected error occurred.');
+        console.log(error)
       }
       }
       setLoading(false);
